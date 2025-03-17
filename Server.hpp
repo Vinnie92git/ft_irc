@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/14 02:54:25 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/18 00:42:22 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <string.h>
 #include <cstdlib>
 #include <fcntl.h>
 #include <unistd.h>
 #include <poll.h>
 #include <vector>
+#include "Client.hpp"
 
 #define BACKLOG 10
 
@@ -40,6 +42,7 @@ public:
 
 private:
 	std::vector<struct pollfd>	pollFds;
+	std::vector<Client>			connectedClients;
 	std::string					serverPassword;
 	int							serverSocket;
 	int							serverPort;

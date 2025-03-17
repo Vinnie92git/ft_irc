@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/03/14 02:55:26 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/18 00:44:11 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,30 @@ void	Server::receiveData()
 
 void	Server::acceptClient()
 {
-	
+	Client				newClient;
+	struct sockaddr_in	clientAddr;
+	socklen_t			addrLen = sizeof(clientAddr);
+
+	// Accept incomming client connection
+	int	newFd = accept(serverSocket, (struct sockaddr *)&clientAddr, &addrLen);
+	if (newFd < 0)
+	{
+		std::cout << "\033[31;1mError: failed to accept client.\033[0m" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	std::cout << "\033[32mClient connected successfully.\033[0m" << std::endl;
+
+	// Add client socket to the pool of monitored fds
+	struct pollfd	clientPoll;
+	clientPoll.fd = newFd;
+	clientPoll.events = POLLIN;
+	clientPoll.revents = 0;
+	pollFds.push_back(clientPoll);
+
+	// Add client to the vector of connected clients
+	newClient.setSocket(newFd);
+	newClient.setAddress(inet_ntoa(clientAddr.sin_addr));
+	connectedClients.push_back(newClient);
 }
 
 void	Server::pollSockets()
@@ -40,7 +63,6 @@ void	Server::pollSockets()
 			std::cout << "\033[31;1mError: poll().\033[0m" << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		
 		// Check if there is any data to read in the existing connections
 		for (size_t i; i < pollFds.size(); i++)
 		{
@@ -100,7 +122,7 @@ void	Server::initSocket()
 		exit(EXIT_FAILURE);
 	}
 
-	// Add the server socket to the vector of monitored fds
+	// Add the socket to the pool of monitored fds
 	struct pollfd	serverPoll;
 	serverPoll.fd = serverSocket;
 	serverPoll.events = POLLIN;
@@ -113,6 +135,6 @@ void	Server::initSocket()
 void	Server::bootServer()
 {
 	initSocket();
-	// pollSockets();
+	pollSockets();
 	close(serverSocket);
 }
