@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/18 00:42:22 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/19 14:26:28 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Server
 public:
 	Server(std::string port, std::string password);
 
-	void	receiveData();
+	void	receiveData(int fd);
 	void	acceptClient();
 	void	pollSockets();
 	void	initSocket();
@@ -44,6 +44,7 @@ private:
 	std::vector<struct pollfd>	pollFds;
 	std::vector<Client>			connectedClients;
 	std::string					serverPassword;
+	char						serverIP[INET_ADDRSTRLEN];
 	int							serverSocket;
 	int							serverPort;
 };

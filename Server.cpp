@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/03/18 00:44:11 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/19 14:26:21 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Server::Server(std::string port, std::string password)
 	this->serverSocket = -1;
 }
 
-void	Server::receiveData()
+void	Server::receiveData(int fd)
 {
 	
 }
@@ -71,7 +71,7 @@ void	Server::pollSockets()
 				if (pollFds[i].fd == serverSocket)
 					acceptClient();
 				else
-					receiveData();
+					receiveData(pollFds[i].fd);
 			}
 		}
 	}
@@ -129,7 +129,9 @@ void	Server::initSocket()
 	serverPoll.revents = 0;
 	pollFds.push_back(serverPoll);
 
-	std::cout << "\033[32mServer listening on port\033[0m -> " << serverPort << std::endl;
+	inet_ntop(AF_INET, &serverAddr.sin_addr, serverIP, INET_ADDRSTRLEN);
+	std::cout << "\033[32mServer address\033[0m -> " << serverIP << std::endl;
+	std::cout << "\033[32mServer listening on port\033[0m -> " << ntohs(serverAddr.sin_port) << std::endl;
 }
 
 void	Server::bootServer()
