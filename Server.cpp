@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/03/19 14:26:21 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/21 15:09:51 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,15 @@ Server::Server(std::string port, std::string password)
 
 void	Server::receiveData(int fd)
 {
-	
+	char	buffer[1024];
+	memset(buffer, 0, sizeof(buffer));
+
+	ssize_t	recvBytes = recv(fd, &buffer, sizeof(buffer) - 1, 0);
+	if (recvBytes > 0)
+	{
+		buffer[recvBytes] = '\0';
+		std::cout << "\033[32mClient \033[0m" << fd << "\033[32m sent this data: \033[0m" << buffer << std::endl;
+	}
 }
 
 void	Server::acceptClient()
@@ -29,6 +37,7 @@ void	Server::acceptClient()
 	Client				newClient;
 	struct sockaddr_in	clientAddr;
 	socklen_t			addrLen = sizeof(clientAddr);
+	std::string			welcomeMsg = "Welcome to ft_irc! This is a debugging message, for now.\n";
 
 	// Accept incomming client connection
 	int	newFd = accept(serverSocket, (struct sockaddr *)&clientAddr, &addrLen);
@@ -37,7 +46,11 @@ void	Server::acceptClient()
 		std::cout << "\033[31;1mError: failed to accept client.\033[0m" << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "\033[32mClient connected successfully.\033[0m" << std::endl;
+	if (fcntl(newFd, F_SETFL, O_NONBLOCK) < 0)
+	{
+		std::cout << "\033[31;1mError: failed to create non-blocking socket.\033[0m" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	// Add client socket to the pool of monitored fds
 	struct pollfd	clientPoll;
@@ -50,6 +63,15 @@ void	Server::acceptClient()
 	newClient.setSocket(newFd);
 	newClient.setAddress(inet_ntoa(clientAddr.sin_addr));
 	connectedClients.push_back(newClient);
+	
+	std::cout << "\033[32mClient connected successfully.\033[0m" << std::endl;
+	std::cout << "\033[32mClient socket\033[0m -> " << newFd << std::endl;
+
+	if (send(newFd, welcomeMsg.c_str(), welcomeMsg.length(), 0) < 0)
+	{
+		std::cout << "\033[31;1mError: send().\033[0m" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 }
 
 void	Server::pollSockets()
@@ -64,7 +86,7 @@ void	Server::pollSockets()
 			exit(EXIT_FAILURE);
 		}
 		// Check if there is any data to read in the existing connections
-		for (size_t i; i < pollFds.size(); i++)
+		for (size_t i = 0; i < pollFds.size(); i++)
 		{
 			if (pollFds[i].revents & POLLIN)
 			{
@@ -75,6 +97,7 @@ void	Server::pollSockets()
 			}
 		}
 	}
+
 }
 
 void	Server::initSocket()
@@ -130,6 +153,7 @@ void	Server::initSocket()
 	pollFds.push_back(serverPoll);
 
 	inet_ntop(AF_INET, &serverAddr.sin_addr, serverIP, INET_ADDRSTRLEN);
+	std::cout << "\033[32mServer socket\033[0m -> " << serverSocket << std::endl;
 	std::cout << "\033[32mServer address\033[0m -> " << serverIP << std::endl;
 	std::cout << "\033[32mServer listening on port\033[0m -> " << ntohs(serverAddr.sin_port) << std::endl;
 }
