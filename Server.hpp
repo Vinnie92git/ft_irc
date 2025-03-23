@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/19 14:26:28 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/23 23:41:18 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 #include <unistd.h>
 #include <poll.h>
 #include <vector>
+#include <csignal>
+#include <ctime>
 #include "Client.hpp"
 
 #define BACKLOG 10
@@ -34,16 +36,21 @@ class Server
 public:
 	Server(std::string port, std::string password);
 
-	void	receiveData(int fd);
-	void	acceptClient();
-	void	pollSockets();
-	void	initSocket();
-	void	bootServer();
+	void		shutdownServer();
+	void		removeClient(int fd);
+	void		receiveData(int fd);
+	void		acceptClient();
+	void		pollSockets();
+	void		initSocket();
+	void		bootServer();
+	void		timestamp();
+	static void	signalHandler(int signal);
 
 private:
 	std::vector<struct pollfd>	pollFds;
 	std::vector<Client>			connectedClients;
 	std::string					serverPassword;
+	static bool					signal;
 	char						serverIP[INET_ADDRSTRLEN];
 	int							serverSocket;
 	int							serverPort;

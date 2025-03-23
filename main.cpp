@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:35:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/18 00:00:07 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/23 22:48:21 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	Server	server(argv[1], argv[2]);
+	signal(SIGINT, Server::signalHandler);
+	signal(SIGQUIT, Server::signalHandler);
 	server.bootServer();
 	return 0;
 }

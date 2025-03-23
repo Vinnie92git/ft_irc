@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 01:03:48 by vini              #+#    #+#             */
-/*   Updated: 2025/03/18 00:11:14 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/23 22:31:03 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,11 @@
 class Client
 {
 public:
-	void	setSocket(int fd);
 	void	setAddress(std::string address);
+	void	setSocket(int fd);
+
+	std::string	getAddress();
+	int			getSocket();
 
 private:
 	std::string	clientAddress;
