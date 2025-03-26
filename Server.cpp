@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/03/23 23:57:57 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/26 19:32:54 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,61 @@ void	Server::removeClient(int fd)
 			pollFds.erase(pollFds.begin() + i);
 }
 
+std::vector<std::string>	Server::splitCommand(std::string& command)
+{
+	std::vector<std::string>	tokens;
+	std::istringstream			iss(command);
+	std::string					token;
+
+	while(iss >> token)
+	{
+		tokens.push_back(token);
+		token.clear();
+	}
+	return tokens;
+}
+
+void	Server::parseCommand(std::string& command, int fd)
+{
+	(void)fd;
+	if (command.empty())
+		return ;
+
+	// Split each command into tokens and execute the command
+	std::vector<std::string>	tokens = splitCommand(command);
+	if (tokens[0] == "PASS" || tokens[0] == "pass")
+		std::cout << "Setting password..." << std::endl;
+	else if (tokens[0] == "NICK" || tokens[0] == "nick")
+		std::cout << "Assigning nickname..." << std::endl;
+	else if (tokens[0] == "USER" || tokens[0] == "user")
+		std::cout << "Assigning username..." << std::endl;
+	else if (tokens[0] == "EXIT" || tokens[0] == "exit")
+		std::cout << "Client disconnecting..." << std::endl;
+	else
+		std::cout << "Unrecognized command..." << std::endl;
+}
+
+std::vector<std::string>	Server::parseBuffer(char* buffer)
+{
+	std::vector<std::string>	lineVector;
+	std::istringstream			iss(buffer);
+	std::string					line;
+
+	// Stream buffer into vector of strings for parsing
+	while(std::getline(iss, line))
+	{
+		size_t pos = line.find_first_of("\r\n");
+		if(pos != std::string::npos)
+			line = line.substr(0, pos);
+		lineVector.push_back(line);
+	}
+	return lineVector;
+}
+
 void	Server::receiveData(int fd)
 {
-	char	buffer[1024];
+	std::vector<std::string>	commands;
+	char						buffer[1024];
 	memset(buffer, 0, sizeof(buffer));
 
 	// Receive data from connected client
@@ -58,7 +110,13 @@ void	Server::receiveData(int fd)
 	if (recvBytes > 0)
 	{
 		buffer[recvBytes] = '\0';
-		std::cout << "\033[32mClient \033[0m" << fd << "\033[32m sent this data:\n\033[0m" << buffer << std::endl;
+		commands = parseBuffer(buffer);
+		for (size_t i = 0; i < commands.size(); i++)
+		{
+			timestamp();
+			std::cout << "[" << commands[i] << "]" << std::endl;
+			parseCommand(commands[i], fd);
+		}
 	}
 	else if (recvBytes == 0)
 	{
@@ -67,6 +125,7 @@ void	Server::receiveData(int fd)
 	}
 	else
 		std::cout << "\033[31mError receiving data from client \033[0m" << fd << std::endl;
+	
 }
 
 void	Server::acceptClient()

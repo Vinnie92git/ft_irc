@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 01:03:48 by vini              #+#    #+#             */
-/*   Updated: 2025/03/23 22:31:03 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/26 14:46:56 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,19 @@
 class Client
 {
 public:
+	void	setNickname(std::string nickname);
+	void	setUsername(std::string username);
 	void	setAddress(std::string address);
 	void	setSocket(int fd);
 
+	std::string	getNickname();
+	std::string	getUsername();
 	std::string	getAddress();
 	int			getSocket();
 
 private:
+	std::string	nickname;
+	std::string	username;
 	std::string	clientAddress;
 	int			clientSocket;
 };

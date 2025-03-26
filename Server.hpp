@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/23 23:41:18 by vini             ###   ########.fr       */
+/*   Updated: 2025/03/26 19:20:13 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 #include <vector>
 #include <csignal>
 #include <ctime>
+#include <sstream>
+#include <string>
 #include "Client.hpp"
 
 #define BACKLOG 10
@@ -36,6 +38,10 @@ class Server
 public:
 	Server(std::string port, std::string password);
 
+	std::vector<std::string>	splitCommand(std::string& command);
+	std::vector<std::string>	parseBuffer(char* buffer);
+
+	void		parseCommand(std::string& command, int fd);
 	void		shutdownServer();
 	void		removeClient(int fd);
 	void		receiveData(int fd);
