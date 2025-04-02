@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/14 01:03:48 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 14:06:52 by vini             ###   ########.fr       */
+/*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
+/*   Updated: 2025/04/02 14:33:43 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#ifndef CHANNEL_HPP
+#define CHANNEL_HPP
 
 #include <iostream>
 #include <iomanip>
@@ -25,32 +25,20 @@
 #include <poll.h>
 #include <vector>
 
-class Client
+class Channel
 {
 public:
-	Client();
-	Client(const Client& toCopy);
-	Client& operator=(const Client& toAssign);
-	~Client();
+	Channel();
+	Channel(const Channel& toCopy);
+	Channel& operator=(const Channel& toAssign);
+	~Channel();
 
-	void	setPassword(std::string password);
-	void	setNickname(std::string nickname);
-	void	setUsername(std::string username);
-	void	setAddress(std::string address);
-	void	setSocket(int fd);
+	void	setName(std::string channelName);
 
-	std::string	getPassword();
-	std::string	getNickname();
-	std::string	getUsername();
-	std::string	getAddress();
-	int			getSocket();
+	std::string	getName();
 
 private:
-	std::string	password;
-	std::string	nickname;
-	std::string	username;
-	std::string	clientAddress;
-	int			clientSocket;
+	std::string	name;
 };
 
 #endif

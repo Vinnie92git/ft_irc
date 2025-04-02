@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 12:07:30 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/02 14:15:45 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,27 @@
 #include <sstream>
 #include <string>
 #include "Client.hpp"
+#include "Channel.hpp"
 
 #define BACKLOG 10
 
 class Server
 {
 public:
+	Server();
 	Server(std::string port, std::string password);
+	Server(const Server& toCopy);
+	Server& operator=(const Server& toAssign);
+
+	void	setClientPassword(std::string& command, int fd);
+	void	setClientNickname(std::string& command, int fd);
+	void	setClientUsername(std::string& command, int fd);
+	void	joinCmd(std::string& command, int fd);
 
 	std::vector<std::string>	splitCommand(std::string& command);
 	std::vector<std::string>	splitBuffer(char* buffer);
+	void						parseCommand(std::string& command, int fd);
 
-	void		parseCommand(std::string& command, int fd);
 	void		shutdownServer();
 	void		removeClient(int fd);
 	void		receiveData(int fd);

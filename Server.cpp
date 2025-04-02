@@ -6,17 +6,41 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 12:07:44 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/02 14:31:58 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
+Server::Server()
+{
+	this->serverPort = 6667;
+	this->serverPassword = "";
+	this->serverSocket = -1;
+	
+}
 
 Server::Server(std::string port, std::string password)
 {
 	this->serverPort = std::atoi(port.c_str());
 	this->serverPassword = password;
 	this->serverSocket = -1;
+}
+
+Server::Server(const Server& toCopy){*this = toCopy;}
+
+Server& Server::operator=(const Server& toAssign)
+{
+	if (this != &toAssign)
+	{
+		this->pollFds = toAssign.pollFds;
+		this->connectedClients = toAssign.connectedClients;
+		this->signal = toAssign.signal;
+		this->serverPort = toAssign.serverPort;
+		this->serverPassword = toAssign.serverPassword;
+		this->serverSocket = toAssign.serverSocket;
+	}
+	return *this;
 }
 
 void	Server::shutdownServer()
@@ -70,12 +94,16 @@ void	Server::parseCommand(std::string& command, int fd)
 
 	// Split each command into tokens and execute the command
 	std::vector<std::string>	tokens = splitCommand(command);
+	if (tokens[0] == "CAP" || tokens[0] == "cap")
+		std::cout << "Server has no capability negotiation." << std::endl;
 	if (tokens[0] == "PASS" || tokens[0] == "pass")
-		std::cout << "Setting password..." << std::endl;
+		setClientPassword(command, fd);
 	else if (tokens[0] == "NICK" || tokens[0] == "nick")
-		std::cout << "Assigning nickname..." << std::endl;
+		setClientNickname(command, fd);
 	else if (tokens[0] == "USER" || tokens[0] == "user")
-		std::cout << "Assigning username..." << std::endl;
+		setClientUsername(command, fd);
+	else if (tokens[0] == "JOIN" || tokens[0] == "join")
+		joinCmd(command, fd);
 	else if (tokens[0] == "EXIT" || tokens[0] == "exit")
 		std::cout << "Client disconnecting..." << std::endl;
 	else
@@ -84,7 +112,7 @@ void	Server::parseCommand(std::string& command, int fd)
 
 std::vector<std::string>	Server::splitBuffer(char* buffer)
 {
-	std::vector<std::string>	lineVector;
+	std::vector<std::string>	splitLines;
 	std::istringstream			iss(buffer);
 	std::string					line;
 
@@ -94,9 +122,9 @@ std::vector<std::string>	Server::splitBuffer(char* buffer)
 		size_t pos = line.find_first_of("\r\n");
 		if(pos != std::string::npos)
 			line = line.substr(0, pos);
-		lineVector.push_back(line);
+		splitLines.push_back(line);
 	}
-	return lineVector;
+	return splitLines;
 }
 
 void	Server::receiveData(int fd)
