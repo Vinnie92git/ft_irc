@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:35:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/23 22:48:21 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/02 12:00:45 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,16 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	Server	server(argv[1], argv[2]);
-	signal(SIGINT, Server::signalHandler);
-	signal(SIGQUIT, Server::signalHandler);
-	server.bootServer();
+	try
+	{
+		signal(SIGINT, Server::signalHandler);
+		signal(SIGQUIT, Server::signalHandler);
+		server.bootServer();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		server.shutdownServer();
+	}
 	return 0;
 }

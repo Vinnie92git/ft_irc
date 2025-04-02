@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/03/26 19:20:13 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/02 12:07:30 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ public:
 	Server(std::string port, std::string password);
 
 	std::vector<std::string>	splitCommand(std::string& command);
-	std::vector<std::string>	parseBuffer(char* buffer);
+	std::vector<std::string>	splitBuffer(char* buffer);
 
 	void		parseCommand(std::string& command, int fd);
 	void		shutdownServer();

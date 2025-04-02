@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/03/26 19:32:54 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/02 12:07:44 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	Server::parseCommand(std::string& command, int fd)
 		std::cout << "Unrecognized command..." << std::endl;
 }
 
-std::vector<std::string>	Server::parseBuffer(char* buffer)
+std::vector<std::string>	Server::splitBuffer(char* buffer)
 {
 	std::vector<std::string>	lineVector;
 	std::istringstream			iss(buffer);
@@ -102,7 +102,7 @@ std::vector<std::string>	Server::parseBuffer(char* buffer)
 void	Server::receiveData(int fd)
 {
 	std::vector<std::string>	commands;
-	char						buffer[1024];
+	char						buffer[512];
 	memset(buffer, 0, sizeof(buffer));
 
 	// Receive data from connected client
@@ -110,7 +110,7 @@ void	Server::receiveData(int fd)
 	if (recvBytes > 0)
 	{
 		buffer[recvBytes] = '\0';
-		commands = parseBuffer(buffer);
+		commands = splitBuffer(buffer);
 		for (size_t i = 0; i < commands.size(); i++)
 		{
 			timestamp();
@@ -140,12 +140,12 @@ void	Server::acceptClient()
 	if (newFd < 0)
 	{
 		std::cout << "\033[31;1mError: failed to accept client.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
+		return ;
 	}
 	if (fcntl(newFd, F_SETFL, O_NONBLOCK) < 0)
 	{
 		std::cout << "\033[31;1mError: failed to create non-blocking socket.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
+		return ;
 	}
 
 	// Add client socket to the pool of monitored fds
@@ -168,7 +168,7 @@ void	Server::acceptClient()
 	if (send(newFd, welcomeMsg.c_str(), welcomeMsg.length(), MSG_NOSIGNAL) < 0)
 	{
 		std::cout << "\033[31;1mError: send().\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
+		return ;
 	}
 }
 
@@ -179,10 +179,8 @@ void	Server::pollSockets()
 	{
 		int	activity = poll(&pollFds[0], pollFds.size(), -1);
 		if (activity < 0 && Server::signal == false)
-		{
-			std::cout << "\033[31;1mError: poll().\033[0m" << std::endl;
-			exit(EXIT_FAILURE);
-		}
+			throw std::runtime_error("\033[31;1mError: poll().\033[0m");
+
 		// Check if there is any data to read in the existing connections
 		for (size_t i = 0; i < pollFds.size(); i++)
 		{
@@ -210,37 +208,22 @@ void	Server::initSocket()
 	// Create server socket
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket < 0)
-	{
-		std::cout << "\033[31;1mError: failed to create socket.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("\033[31;1mError: failed to create server socket.\033[0m");
 
 	// Enable the socket to be reusable and non-blocking
 	int	opt = 1;
 	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-	{
-		std::cout << "\033[31;1mError: failed to reuse socket after server shutdown.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("\033[31;1mError: failed to reuse socket after server shutdown.\033[0m");
 	if (fcntl(serverSocket, F_SETFL, O_NONBLOCK) < 0)
-	{
-		std::cout << "\033[31;1mError: failed to create non-blocking socket.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("\033[31;1mError: failed to create non-blocking socket.\033[0m");
 
 	// Bind the socket to IP address and Port
 	if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
-	{
-		std::cout << "\033[31;1mError: failed to bind socket.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("\033[31;1mError: failed to bind server socket.\033[0m");
 
 	// Enable the socket to listen to incomming connections
 	if (listen(serverSocket, BACKLOG) < 0)
-	{
-		std::cout << "\033[31;1mError: socket not listening.\033[0m" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("\033[31;1mError: server socket not listening.\033[0m");
 
 	// Add the socket to the pool of monitored fds
 	struct pollfd	serverPoll;
@@ -249,6 +232,7 @@ void	Server::initSocket()
 	serverPoll.revents = 0;
 	pollFds.push_back(serverPoll);
 
+	// Display server address info
 	inet_ntop(AF_INET, &serverAddr.sin_addr, serverIP, INET_ADDRSTRLEN);
 	std::cout << "\033[32;1m----------SERVER ONLINE----------\033[0m" << std::endl;
 	std::cout << "\033[32mServer socket\033[0m -> " << serverSocket << std::endl;
