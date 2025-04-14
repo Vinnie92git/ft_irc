@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 14:33:43 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/14 20:39:45 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,28 @@
 #include <unistd.h>
 #include <poll.h>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 class Channel
 {
 public:
 	Channel();
+	Channel(std::string name);
 	Channel(const Channel& toCopy);
 	Channel& operator=(const Channel& toAssign);
 	~Channel();
 
 	void	setName(std::string channelName);
+	void	addMember(int memberFd);
+	void	removeMember(int memberFd);
 
-	std::string	getName();
+	std::vector<int>	getMembers();
+	std::string			getName();
 
 private:
-	std::string	name;
+	std::vector<int>	members;
+	std::string			name;
 };
 
 #endif

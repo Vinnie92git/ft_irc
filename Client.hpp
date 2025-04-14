@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 01:03:48 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 14:06:52 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/14 22:53:55 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,14 @@ public:
 	void	setPassword(std::string password);
 	void	setNickname(std::string nickname);
 	void	setUsername(std::string username);
+	void	setPrefix(std::string prefix);
 	void	setAddress(std::string address);
 	void	setSocket(int fd);
 
 	std::string	getPassword();
 	std::string	getNickname();
 	std::string	getUsername();
+	std::string	getPrefix();
 	std::string	getAddress();
 	int			getSocket();
 
@@ -49,7 +51,9 @@ private:
 	std::string	password;
 	std::string	nickname;
 	std::string	username;
+	std::string	prefix;
 	std::string	clientAddress;
+	bool		isOperator;
 	int			clientSocket;
 };
 

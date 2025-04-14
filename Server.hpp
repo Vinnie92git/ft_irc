@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 14:15:45 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/14 23:53:45 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,19 @@
 #include <ctime>
 #include <sstream>
 #include <string>
+#include <algorithm>
+#include <iterator>
 #include "Client.hpp"
 #include "Channel.hpp"
 
 #define BACKLOG 10
+
+struct	ircMessage
+{
+	std::string					prefix;
+	std::string					command;
+	std::vector<std::string>	params;
+};
 
 class Server
 {
@@ -42,14 +51,16 @@ public:
 	Server(const Server& toCopy);
 	Server& operator=(const Server& toAssign);
 
-	void	setClientPassword(std::string& command, int fd);
-	void	setClientNickname(std::string& command, int fd);
-	void	setClientUsername(std::string& command, int fd);
-	void	joinCmd(std::string& command, int fd);
+	void	setClientPassword(std::vector<std::string>& params, int fd);
+	void	setClientNickname(std::vector<std::string>& params, int fd);
+	void	setClientUsername(std::vector<std::string>& params, int fd);
+	void	joinCmd(std::vector<std::string>& params, int fd);
+	void	joinChannel(std::string channelName, int fd);
 
-	std::vector<std::string>	splitCommand(std::string& command);
+	std::vector<std::string>	splitComma(std::string param);
 	std::vector<std::string>	splitBuffer(char* buffer);
-	void						parseCommand(std::string& command, int fd);
+	ircMessage					splitMessage(std::string& message);
+	void						parseMessage(std::string& message, int fd);
 
 	void		shutdownServer();
 	void		removeClient(int fd);
@@ -61,9 +72,13 @@ public:
 	void		timestamp();
 	static void	signalHandler(int signal);
 
+	Client*		getClient(int fd);
+	Channel*	getChannel(std::string name);
+
 private:
 	std::vector<struct pollfd>	pollFds;
 	std::vector<Client>			connectedClients;
+	std::vector<Channel>		channels;
 	std::string					serverPassword;
 	static bool					signal;
 	char						serverIP[INET_ADDRSTRLEN];

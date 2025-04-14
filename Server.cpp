@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/02 14:31:58 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/15 00:22:22 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ Server& Server::operator=(const Server& toAssign)
 	{
 		this->pollFds = toAssign.pollFds;
 		this->connectedClients = toAssign.connectedClients;
+		this->channels = toAssign.channels;
 		this->signal = toAssign.signal;
 		this->serverPort = toAssign.serverPort;
 		this->serverPassword = toAssign.serverPassword;
@@ -72,39 +73,58 @@ void	Server::removeClient(int fd)
 			pollFds.erase(pollFds.begin() + i);
 }
 
-std::vector<std::string>	Server::splitCommand(std::string& command)
+ircMessage	Server::splitMessage(std::string& message)
 {
-	std::vector<std::string>	tokens;
-	std::istringstream			iss(command);
+	ircMessage					parsedMessage;
+	std::istringstream			iss(message);
 	std::string					token;
 
+	// Handle optional prefix
+	if(!message.empty() && message[0] == ':')
+	{
+		iss >> token;
+		parsedMessage.prefix = token.substr(1);
+	}
+
+	// Get the command
+	if (iss >> token)
+		parsedMessage.command = token;
+
+	// Store parameters
 	while(iss >> token)
 	{
-		tokens.push_back(token);
-		token.clear();
+		if (token[0] == ':')
+		{
+			std::string trailing = token.substr(1);
+			std::string rest;
+			std::getline(iss, rest);
+			parsedMessage.params.push_back(trailing + rest);
+			break;
+		}
+		parsedMessage.params.push_back(token);
 	}
-	return tokens;
+	return parsedMessage;
 }
 
-void	Server::parseCommand(std::string& command, int fd)
+void	Server::parseMessage(std::string& message, int fd)
 {
-	(void)fd;
-	if (command.empty())
+	if (message.empty())
 		return ;
 
-	// Split each command into tokens and execute the command
-	std::vector<std::string>	tokens = splitCommand(command);
-	if (tokens[0] == "CAP" || tokens[0] == "cap")
+	// Parse each message into a struct to facilitate execution
+	ircMessage	parsedMessage = splitMessage(message);
+	if (parsedMessage.command == "CAP" || parsedMessage.command == "cap")
 		std::cout << "Server has no capability negotiation." << std::endl;
-	if (tokens[0] == "PASS" || tokens[0] == "pass")
-		setClientPassword(command, fd);
-	else if (tokens[0] == "NICK" || tokens[0] == "nick")
-		setClientNickname(command, fd);
-	else if (tokens[0] == "USER" || tokens[0] == "user")
-		setClientUsername(command, fd);
-	else if (tokens[0] == "JOIN" || tokens[0] == "join")
-		joinCmd(command, fd);
-	else if (tokens[0] == "EXIT" || tokens[0] == "exit")
+	else if (parsedMessage.command == "PASS" || parsedMessage.command == "pass")
+		setClientPassword(parsedMessage.params, fd);
+	else if (parsedMessage.command == "NICK" || parsedMessage.command == "nick")
+		setClientNickname(parsedMessage.params, fd);
+	else if (parsedMessage.command == "USER" || parsedMessage.command == "user")
+		setClientUsername(parsedMessage.params, fd);
+	else if (parsedMessage.command == "JOIN" || parsedMessage.command == "join")
+		joinCmd(parsedMessage.params, fd);
+	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit"
+		|| parsedMessage.command == "QUIT" || parsedMessage.command == "quit")
 		std::cout << "Client disconnecting..." << std::endl;
 	else
 		std::cout << "Unrecognized command..." << std::endl;
@@ -129,7 +149,7 @@ std::vector<std::string>	Server::splitBuffer(char* buffer)
 
 void	Server::receiveData(int fd)
 {
-	std::vector<std::string>	commands;
+	std::vector<std::string>	messages;
 	char						buffer[512];
 	memset(buffer, 0, sizeof(buffer));
 
@@ -138,12 +158,12 @@ void	Server::receiveData(int fd)
 	if (recvBytes > 0)
 	{
 		buffer[recvBytes] = '\0';
-		commands = splitBuffer(buffer);
-		for (size_t i = 0; i < commands.size(); i++)
+		messages = splitBuffer(buffer);
+		for (size_t i = 0; i < messages.size(); i++)
 		{
 			timestamp();
-			std::cout << "[" << commands[i] << "]" << std::endl;
-			parseCommand(commands[i], fd);
+			std::cout << "[" << messages[i] << "]" << std::endl;
+			parseMessage(messages[i], fd);
 		}
 	}
 	else if (recvBytes == 0)
@@ -284,6 +304,26 @@ void	Server::timestamp()
 	std::strftime(buffer, sizeof(buffer), "%H:%M:%S", localTime);
 
 	std::cout << "[" << buffer << "]: ";
+}
+
+Client*	Server::getClient(int fd)
+{
+	for (size_t i = 0; i < this->connectedClients.size(); i++)
+	{
+		if (this->connectedClients[i].getSocket() == fd)
+			return &this->connectedClients[i];
+	}
+	return NULL;
+}
+
+Channel*	Server::getChannel(std::string name)
+{
+	for(size_t i = 0; i < this->channels.size(); i++)
+	{
+		if (this->channels[i].getName() == name)
+			return &this->channels[i];
+	}
+	return NULL;
 }
 
 bool	Server::signal = false;
