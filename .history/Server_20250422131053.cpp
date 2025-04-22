@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 13:16:25 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/22 13:10:52 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,11 +343,6 @@ void	Server::signalHandler(int signal)
 void	Server::removeChannel(std::string channelName)
 {
 	for (size_t i = 0; i < channels.size(); i++)
-	{
 		if (channels[i].getName() == channelName)
-		{
-			std::cout << "eliminar canal" << std::endl;
 			channels.erase(channels.begin() + i);
-		}
-	}
 }

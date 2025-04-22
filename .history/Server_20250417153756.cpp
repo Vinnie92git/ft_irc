@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 13:16:25 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/15 00:22:22 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Server::Server()
 	this->serverPort = 6667;
 	this->serverPassword = "";
 	this->serverSocket = -1;
-
+	
 }
 
 Server::Server(std::string port, std::string password)
@@ -123,12 +123,6 @@ void	Server::parseMessage(std::string& message, int fd)
 		setClientUsername(parsedMessage.params, fd);
 	else if (parsedMessage.command == "JOIN" || parsedMessage.command == "join")
 		joinCmd(parsedMessage.params, fd);
-	else if (parsedMessage.command == "PART" || parsedMessage.command == "part")
-	{
-		partCmd(parsedMessage.params, fd);
-	}
-/* 	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
-		modeCmd(parsedMessage.params, fd); */
 	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit"
 		|| parsedMessage.command == "QUIT" || parsedMessage.command == "quit")
 		std::cout << "Client disconnecting..." << std::endl;
@@ -179,7 +173,7 @@ void	Server::receiveData(int fd)
 	}
 	else
 		std::cout << "\033[31mError receiving data from client \033[0m" << fd << std::endl;
-
+	
 }
 
 void	Server::acceptClient()
@@ -213,7 +207,7 @@ void	Server::acceptClient()
 	newClient.setSocket(newFd);
 	newClient.setAddress(inet_ntoa(clientAddr.sin_addr));
 	connectedClients.push_back(newClient);
-
+	
 	timestamp();
 	std::cout << "\033[32mClient connected successfully.\033[0m" << std::endl;
 	std::cout << "\033[32mClient socket\033[0m -> " << newFd << std::endl;
@@ -338,16 +332,4 @@ void	Server::signalHandler(int signal)
 	(void)signal;
 	std::cout << std::endl;
 	Server::signal = true;
-}
-
-void	Server::removeChannel(std::string channelName)
-{
-	for (size_t i = 0; i < channels.size(); i++)
-	{
-		if (channels[i].getName() == channelName)
-		{
-			std::cout << "eliminar canal" << std::endl;
-			channels.erase(channels.begin() + i);
-		}
-	}
 }

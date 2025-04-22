@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 14:10:46 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/22 13:57:31 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void Server::partCmd(std::vector<std::string>& params, int fd)
 
 void	Server::quitCmd(std::vector<std::string>& params, int fd) // /quit <reason>
 {
-	(void)params;
 	quitServer(fd);
 }
 

@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 13:50:33 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/22 13:01:51 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +28,21 @@ Channel::~Channel(){}
 
 void	Channel::setName(std::string channelName){this->name = channelName;}
 void	Channel::addMember(int memberFd) {members.push_back(memberFd);}
-bool	Channel::removeMember(int memberFd)
+void	Channel::removeMember(int memberFd)
 {
-	bool result = false;
 	for (size_t i = 0; i < members.size(); i++)
 		if (members[i] == memberFd)
-		{
 			members.erase(members.begin() + i);
-			result = true;
-		}
-
 
 	// std::vector<int>::iterator it = std::find(members.begin(), members.end(), memberFd);
 	// if (it != members.end())
 	// 	members.erase(it);
-	return (result);
 }
 std::vector<int>	Channel::getMembers() {return this->members;}
 std::string	Channel::getName(){return this->name;}
-
+void	Channel::removeChannel(std::string channelName)
+{
+	for (size_t i = 0; i < channels.size(); i++)
+		if (channels[i]->getName() == channelName)
+			channels.erase(channels.begin() + i);
+}

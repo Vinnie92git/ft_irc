@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 13:16:25 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/17 19:37:23 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,12 +123,13 @@ void	Server::parseMessage(std::string& message, int fd)
 		setClientUsername(parsedMessage.params, fd);
 	else if (parsedMessage.command == "JOIN" || parsedMessage.command == "join")
 		joinCmd(parsedMessage.params, fd);
-	else if (parsedMessage.command == "PART" || parsedMessage.command == "part")
+	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
 	{
-		partCmd(parsedMessage.params, fd);
+		if (!parsedMessage.params.empty())
+			modeCmd(parsedMessage.params, fd);
+		else
+			std::cout << "MODE error: No parameters provided." << std::endl;
 	}
-/* 	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
-		modeCmd(parsedMessage.params, fd); */
 	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit"
 		|| parsedMessage.command == "QUIT" || parsedMessage.command == "quit")
 		std::cout << "Client disconnecting..." << std::endl;
@@ -338,16 +339,4 @@ void	Server::signalHandler(int signal)
 	(void)signal;
 	std::cout << std::endl;
 	Server::signal = true;
-}
-
-void	Server::removeChannel(std::string channelName)
-{
-	for (size_t i = 0; i < channels.size(); i++)
-	{
-		if (channels[i].getName() == channelName)
-		{
-			std::cout << "eliminar canal" << std::endl;
-			channels.erase(channels.begin() + i);
-		}
-	}
 }

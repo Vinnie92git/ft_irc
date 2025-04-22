@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 13:36:52 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/22 13:07:52 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,9 @@ public:
 	void	setClientUsername(std::vector<std::string>& params, int fd);
 	void	joinCmd(std::vector<std::string>& params, int fd);
 	void	partCmd(std::vector<std::string>& params, int fd);
-	void	quitCmd(std::vector<std::string>& params, int fd);
 	//void	modeCmd(std::vector<std::string>& params, int fd);
 	void	joinChannel(std::string channelName, int fd);
 	void	partChannel(std::string channelName, int fd);
-	void	quitServer(int fd);
 	//void	modeTarget(std::string channelName, std::vector<std::string>& params, int fd, int mode);
 
 	std::vector<std::string>	splitComma(std::string param);

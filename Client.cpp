@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 01:03:51 by vini              #+#    #+#             */
-/*   Updated: 2025/04/14 22:54:20 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/21 14:10:12 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,3 +54,5 @@ std::string	Client::getUsername(){return this->username;}
 std::string	Client::getPrefix(){return this->prefix;}
 std::string	Client::getAddress(){return this->clientAddress;}
 int	Client::getSocket(){return this->clientSocket;}
+std::vector<std::string> Client::getBannedChannels(){return this->bannedChannels;}
+std::vector<std::string> Client::getopChannels(){return this->opChannels;}

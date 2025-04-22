@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 14:10:46 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/17 19:41:07 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,86 +53,36 @@ void	Server::joinCmd(std::vector<std::string>& params, int fd)
 		joinChannel(channelName, fd);
 	}
 }
-
-void Server::partCmd(std::vector<std::string>& params, int fd)
-{
-	if (params.empty())
-	{
-		std::cout << "PART error: No channel provided." << std::endl;
-		return ;
-	}
-
-	std::vector<std::string> channelNames = splitComma(params[0]);
-
-	for (size_t i = 0; i < channelNames.size(); i++)
-	{
-		std::string channelName = channelNames[i];
-		if (channelName[0] != '#')
-		{
-			std::cout << "PART error: Invalid channel name." << std::endl;
-			return ;
-		}
-		partChannel(channelName, fd);}
-}
-
-void	Server::quitCmd(std::vector<std::string>& params, int fd) // /quit <reason>
-{
-	(void)params;
-	quitServer(fd);
-}
-
 /*
 
-Command: MODE	target			+-
-  Parameters: <canal/user> [<modestring> [<mode arguments>...]]
+Command: MODE
+  Parameters: <target> [<modestring> [<mode arguments>...]]
 	MODE #foobar +mb *@127.0.0.1
 
 */
-/* void Server::modeCmd(std::vector<std::string>& params, int fd)
+void Server::modeCmd(std::vector<std::string>& params, int fd)
 {
 	if (params.empty())
 	{
 		std::cout << "MODE error: No target provided." << std::endl;
 		return ;
 	}
-	if (params.size() == 1)
-	{
-		std::cout << "0 entras" << std::endl;
-		std::vector<std::string> ChannelNameTofind = splitComma(params[0]);
-		std::cout << "ChannelNameTofind: " << ChannelNameTofind[0] << std::endl;
-		for (size_t i = 0; i < channels.size(); i++)
-		{
-			if (channels[i].getName() == ChannelNameTofind[0])
-			{
-				std::cout << "linea 79 Channel found: " << channels[i].getName() << std::endl;
-				std::string channelName = ChannelNameTofind[0];
-				if (channelName[0] != '#')
-				{
-					std::cout << "MODE error: Invalid channel name." << std::endl;
-					return;
-				}
-				modeTarget(channels[i].getName(), params,fd, 1);
-			}
-		}
-	}
 	std::cout << "entrando1" << std::endl;
-	std::cout << "params: " << params[0] << " " << params[1] << std::endl;
-
 
 	std::vector<std::string> modestring = splitComma(params[1]);
 	std::string mode = modestring[0];
-	std::cout << "entrando2 printea modestring y mode"<< modestring[0] << " " << mode << std::endl;
 
-	if (mode[0] != '+' && mode[0] != '-')
+
+	std::cout << "entrando2" << std::endl;
+
+
+	std::cout << "splitted modestring: " << modestring[0] << std::endl;
+	if (mode[0] != '+' && mode[1] != '-')
 	{
 		std::cout << "MODE error: Invalid modestring." << std::endl;
-		return;
 	}
 
-
-	//std::cout << "entrando3" << std::endl;
-	//	si es un canal entra aquí
-	//recorrer el vector de canales y si lo encuentra entrar
+	std::cout << "entrando3" << std::endl;
 
 	std::vector<std::string> ChannelNameTofind = splitComma(params[0]);
 	std::cout << "ChannelNameTofind: " << ChannelNameTofind[0] << std::endl;
@@ -150,12 +100,12 @@ Command: MODE	target			+-
 				std::cout << "MODE error: Invalid channel name." << std::endl;
 				return;
 			}
-			modeTarget(channels[i].getName(), params,fd, 1);
+			modeTarget(channels[i].getName(), fd);
 		}
 	}
 
 	std::cout << "entrando5" << std::endl;
-	// si es un usuario entra aquí
+
 	std::vector<std::string> UserNameTofind = splitComma(params[0]);
 	std::cout << "UserNameTofind: " << ChannelNameTofind[0] << std::endl;
 
@@ -164,14 +114,14 @@ Command: MODE	target			+-
 		if (connectedClients[i].getNickname() == UserNameTofind[0])
 		{
 			std::cout << "User found: " << connectedClients[i].getNickname() << std::endl;
-			modeTarget(connectedClients[i].getNickname(), fd, 0);
+			modeTarget(connectedClients[i].getNickname(), fd);
 		}
 	}
 	std::cout << "entrando6" << std::endl;
 
 	std::cout << "MODE error: Target not found." << std::endl;
 }
- */
+
 std::vector<std::string>	Server::splitComma(std::string param)
 {
 	std::vector<std::string>	tokenVector;
@@ -216,62 +166,12 @@ void	Server::joinChannel(std::string channelName, int fd)
 	send(getClient(fd)->getSocket(), endMsg.c_str(), endMsg.length(), 0);
 }
 
-/* void	Server::modeTarget(std::string channelName, std::vector<std::string>& params, int fd, int mode)
+void	Server::modeTarget(std::string channelName, int fd)
 {
 	(void)channelName;
 	(void)fd;
-	std::cout << "entrando7" << std::endl;
+	/*
 		MODE <target> [<modestring> [<mode arguments>...]]
 
-	//0 es un usuario
-
-
-	//1 es un canal
-	if (mode == 1)
-	{
-		if(params.size() == 1)
-		{
-			std::cout << "requesting modes for channel: " << channelName << std::endl;
-		}
-		else if(params.size() >= 2)
-		{
-			std::cout << "setting mode for channel: " << channelName << " with mode: " << params[1] << " with args: " << params[2] << std::endl;
-		}
-	}
-}
 	*/
-
-void	Server::partChannel(std::string channelName, int fd)
-{
-	if (getChannel(channelName))
-	{
-		if (getChannel(channelName)->removeMember(fd))
-		{
-			std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m left the channel \033[0m" << channelName << std::endl;
-			if (getChannel(channelName)->getMembers().empty())
-			{
-				std::cout << "estoy entrando en empty channels de PART" << std::endl;
-				removeChannel(channelName);
-				std::cout << "\033[31mChannel \033[0m" << channelName << "\033[31m removed\033[0m" << std::endl;
-			}
-			std::string partMsg = getClient(fd)->getPrefix() + " PART :" + channelName + "\r\n";
-			send(getClient(fd)->getSocket(), partMsg.c_str(), partMsg.length(), 0);
-		}
-	}
-	else
-		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are no longer in \033[0m" << channelName << std::endl;
-
-}
-
-void	Server::quitServer(int fd)
-{
-	for (size_t i = 0; i < channels.size(); i++)
-	{
-		std::string channelName = channels[i].getName();
-		partChannel(channelName, fd);
-	}
-	std::string quitServerMsg = getClient(fd)->getPrefix() + " QUIT :" + "\r\n";
-	send(getClient(fd)->getSocket(), quitServerMsg.c_str(), quitServerMsg.length(), 0);
-
-	// en caso de que se puedan enviar mensajes privados a otros usuarios tambien habría que borrar el chat
 }
