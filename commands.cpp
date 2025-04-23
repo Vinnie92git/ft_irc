@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/04/22 14:10:46 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/23 23:03:08 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,24 @@
 void	Server::setClientPassword(std::vector<std::string>& params, int fd)
 {
 	getClient(fd)->setPassword(params[0]);
+	if (getClient(fd)->getPassword() == "" || getClient(fd)->getPassword() != serverPassword)
+	{
+		std::string	passMismatchMsg = ":server 464 * :Password incorrect or not supplied\r\n";
+		send(getClient(fd)->getSocket(), passMismatchMsg.c_str(), passMismatchMsg.length(), 0);
+	}
 	std::cout << "Client " << fd << " password: " << getClient(fd)->getPassword() << std::endl;
 }
 
 void	Server::setClientNickname(std::vector<std::string>& params, int fd)
 {
+	for (size_t i = 0; i < connectedClients.size(); i++)
+	{
+		if (params[0] == connectedClients[i].getNickname())
+		{
+			std::string	nickInUseMsg = ":server 433 " + params[0] + " :Nickname is already in use\r\n";
+			send(getClient(fd)->getSocket(), nickInUseMsg.c_str(), nickInUseMsg.length(), 0);
+		}
+	}
 	getClient(fd)->setNickname(params[0]);
 	getClient(fd)->setPrefix(":" + getClient(fd)->getNickname() + "!user@localhost");
 	std::cout << "Client " << fd << " nickname: " << getClient(fd)->getNickname() << std::endl;
@@ -197,8 +210,8 @@ void	Server::joinChannel(std::string channelName, int fd)
 	else
 	{
 		Channel	newChannel(channelName);
-		channels.push_back(newChannel);
 		newChannel.addMember(fd);
+		channels.push_back(newChannel);
 		std::cout << "\033[32mClient \033[0m" << getClient(fd)->getSocket() << "\033[32m created the channel \033[0m" << channelName << std::endl;
 	}
 
@@ -206,7 +219,10 @@ void	Server::joinChannel(std::string channelName, int fd)
 	std::string	topicMsg = ":server 332 " + getClient(fd)->getNickname() + " " + channelName + " :No topic is set\r\n";
 	std::string	namesMsg = ":server 353 " + getClient(fd)->getNickname() + " = " + channelName + " :";
 	for (size_t i = 0; i < getChannel(channelName)->getMembers().size(); i++)
-		namesMsg += getChannel(channelName)->getMembers()[i];
+	{
+		int	memberFd = getChannel(channelName)->getMembers()[i];
+		namesMsg += getClient(memberFd)->getNickname() + " ";
+	}
 	namesMsg += "\r\n";
 	std::string	endMsg = ":server 366 " + getClient(fd)->getNickname() + " " + channelName + " :End of /NAMES list\r\n";
 
