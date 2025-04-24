@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/04/23 23:03:08 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/24 16:03:29 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,37 @@ void	Server::joinCmd(std::vector<std::string>& params, int fd)
 	}
 }
 
-void Server::partCmd(std::vector<std::string>& params, int fd)
+void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
+{
+	if (params.empty())
+	{
+		std::cout << "PART error: No channel provided." << std::endl;
+		return;
+	}
+
+	std::string channelNames = params[0];
+	std::string reason = "";
+
+	if (params.size() > 1)
+		reason = params[1];
+
+	std::vector<std::string> channels = splitComma(channelNames);
+
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		std::string channelName = channels[i];
+		if (channelName[0] == '&')
+			channelName[0] = '#';
+		if (channelName[0] != '#')
+		{
+			std::cout << "PART error: Invalid channel name." << std::endl;
+			return;
+		}
+		partChannel(channelName, reason, fd);
+	}
+}
+
+/* void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
 {
 	if (params.empty())
 	{
@@ -76,6 +106,9 @@ void Server::partCmd(std::vector<std::string>& params, int fd)
 	}
 
 	std::vector<std::string> channelNames = splitComma(params[0]);
+	std::string reason = "";
+	if (params.size() > 1)
+		reason = splitComma(params[1])[0];
 
 	for (size_t i = 0; i < channelNames.size(); i++)
 	{
@@ -85,13 +118,15 @@ void Server::partCmd(std::vector<std::string>& params, int fd)
 			std::cout << "PART error: Invalid channel name." << std::endl;
 			return ;
 		}
-		partChannel(channelName, fd);}
-}
+		partChannel(channelName, reason, fd);}
+} */
 
 void	Server::quitCmd(std::vector<std::string>& params, int fd) // /quit <reason>
 {
-	(void)params;
-	quitServer(fd);
+	std::string reason = "";
+	if (params.size() == 1)
+		std::string reason = splitComma(params[0])[0];
+	quitServer(reason, fd);
 }
 
 /*
@@ -257,36 +292,42 @@ void	Server::joinChannel(std::string channelName, int fd)
 }
 	*/
 
-void	Server::partChannel(std::string channelName, int fd)
+void	Server::partChannel(std::string channelName, std::string reason, int fd)
 {
 	if (getChannel(channelName))
 	{
+		std::string partMsg;
 		if (getChannel(channelName)->removeMember(fd))
 		{
 			std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m left the channel \033[0m" << channelName << std::endl;
 			if (getChannel(channelName)->getMembers().empty())
 			{
-				std::cout << "estoy entrando en empty channels de PART" << std::endl;
 				removeChannel(channelName);
 				std::cout << "\033[31mChannel \033[0m" << channelName << "\033[31m removed\033[0m" << std::endl;
 			}
-			std::string partMsg = getClient(fd)->getPrefix() + " PART :" + channelName + "\r\n";
+			if (reason != "")
+				partMsg = getClient(fd)->getPrefix() + " PART :" + channelName + " :" + reason + "\r\n";
+			else
+				partMsg = getClient(fd)->getPrefix() + " PART :" + channelName + "\r\n";
+
 			send(getClient(fd)->getSocket(), partMsg.c_str(), partMsg.length(), 0);
 		}
 	}
 	else
-		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are no longer in \033[0m" << channelName << std::endl;
+		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 
 }
 
-void	Server::quitServer(int fd)
+// cuando un usuario se desconecta no muestra que el usuario se ha ido del canal
+void	Server::quitServer(std::string reason, int fd)
 {
 	for (size_t i = 0; i < channels.size(); i++)
 	{
 		std::string channelName = channels[i].getName();
-		partChannel(channelName, fd);
+		//partCmd() debería ser así?
+		partChannel(channelName, "", fd);
 	}
-	std::string quitServerMsg = getClient(fd)->getPrefix() + " QUIT :" + "\r\n";
+	std::string quitServerMsg = getClient(fd)->getPrefix() + " QUIT :" + reason + "\r\n";
 	send(getClient(fd)->getSocket(), quitServerMsg.c_str(), quitServerMsg.length(), 0);
 
 	// en caso de que se puedan enviar mensajes privados a otros usuarios tambien habría que borrar el chat
