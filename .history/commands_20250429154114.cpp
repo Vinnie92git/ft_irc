@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/04/29 15:41:37 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/29 15:41:14 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -348,15 +348,12 @@ void	Server::topicChannel(std::string channelName, std::string topic, int fd)
 	// si el canal no existe no puedes hacer nada
 	if (!getChannel(channelName))
 	{
-		std::cout << "_____________-1_______________" << std::endl;
-
 		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << " \033[0m" << channelName << "\033[31m not found\033[0m" << std::endl;
 		return;
 	}
 	// si el usuario no está en el canal significa que no puede ver el topic ni cambiarlo
 	else if (!getChannel(channelName)->isMember(fd))
 	{
-		std::cout << "_____________-2_______________" << std::endl;
 		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 		return;
 	}

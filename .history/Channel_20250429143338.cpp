@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/04/29 15:28:28 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/29 14:33:38 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,3 @@ bool	Channel::isMember(int memberFd)
 	return (result);
 }
 
-void		Channel::setTopic(std::string topic){this->topic = topic;}
-std::string	Channel::getTopic(){return this->topic;}

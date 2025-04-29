@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/23 21:42:31 by vini             ###   ########.fr       */
+/*   Updated: 2025/04/24 16:51:30 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,11 @@ void	Server::parseMessage(std::string& message, int fd)
 	else if (parsedMessage.command == "JOIN" || parsedMessage.command == "join")
 		joinCmd(parsedMessage.params, fd);
 	else if (parsedMessage.command == "PART" || parsedMessage.command == "part")
-	{
 		partCmd(parsedMessage.params, fd);
-	}
+	else if (parsedMessage.command == "QUIT" || parsedMessage.command == "quit")
+		quitCmd(parsedMessage.params, fd);
+	else if (parsedMessage.command == "TOPIC" || parsedMessage.command == "TOPIC")
+		topicCmd(parsedMessage.params, fd);
 /* 	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
 		modeCmd(parsedMessage.params, fd); */
 	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit"
