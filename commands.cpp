@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/04/29 15:41:37 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/30 11:38:11 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,34 @@
 
 void	Server::setClientPassword(std::vector<std::string>& params, int fd)
 {
-	getClient(fd)->setPassword(params[0]);
-	if (getClient(fd)->getPassword() == "" || getClient(fd)->getPassword() != serverPassword)
+	// Check if client already registered
+	if (getClient(fd)->getRegistration() == true)
 	{
-		std::string	passMismatchMsg = ":server 464 * :Password incorrect or not supplied\r\n";
-		send(getClient(fd)->getSocket(), passMismatchMsg.c_str(), passMismatchMsg.length(), 0);
+		std::string err = ":server 462 * :You may not reregister\r\n";
+		send(getClient(fd)->getSocket(), err.c_str(), err.length(), 0);
+		return;
 	}
+
+	// Check if PASS command has the required parameter
+	if (params.empty())
+	{
+		std::string errorMsg = ":server 461 * PASS :Not enough parameters\r\n";
+		send(getClient(fd)->getSocket(), errorMsg.c_str(), errorMsg.length(), 0);
+		return;
+	}
+
+	// Set password
+	getClient(fd)->setPassword(params[0]);
+
+	// Check password validity
+	if (serverPassword != "" && getClient(fd)->getPassword() != serverPassword)
+	{
+		std::string passMismatchMsg = ":server 464 * :Password incorrect\r\n";
+		send(getClient(fd)->getSocket(), passMismatchMsg.c_str(), passMismatchMsg.length(), 0);
+		return;
+	}
+
+	getClient(fd)->setRegistration(true);
 	std::cout << "Client " << fd << " password: " << getClient(fd)->getPassword() << std::endl;
 }
 

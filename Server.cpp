@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/04/24 16:51:30 by roberto          ###   ########.fr       */
+/*   Updated: 2025/04/30 12:09:09 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,7 @@ void	Server::parseMessage(std::string& message, int fd)
 		topicCmd(parsedMessage.params, fd);
 /* 	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
 		modeCmd(parsedMessage.params, fd); */
-	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit"
-		|| parsedMessage.command == "QUIT" || parsedMessage.command == "quit")
+	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit")
 		std::cout << "Client disconnecting..." << std::endl;
 	else
 		std::cout << "Unrecognized command..." << std::endl;
