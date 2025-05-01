@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:37:14 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:57:19 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ public:
 	void	partChannel(std::string channelName, std::string reason, int fd);
 	void	topicChannel(std::string channelName, std::string topic, int fd);
 	void	quitServer(std::string reason, int fd);
-	void	kickUserFromChannel(std::string channelName, std::string user, std::string reason, int fd);
+	void	kickChannel(std::string channelName, std::string user, std::string reason, int fd);
 	//void	modeTarget(std::string channelName, std::vector<std::string>& params, int fd, int mode);
 
 	std::vector<std::string>	splitComma(std::string param);
@@ -83,6 +83,7 @@ public:
 	void		bootServer();
 	void		timestamp();
 	static void	signalHandler(int signal);
+	//int			getFdFromNickname(std::string nickname);
 
 	Client*		getClient(int fd);
 	Channel*	getChannel(std::string name);

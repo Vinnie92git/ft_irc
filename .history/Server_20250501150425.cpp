@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:38:08 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:04:25 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,4 +354,3 @@ void	Server::removeChannel(std::string channelName)
 		}
 	}
 }
-

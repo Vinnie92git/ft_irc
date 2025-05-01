@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:38:08 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:04:10 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,8 +129,7 @@ void	Server::parseMessage(std::string& message, int fd)
 		quitCmd(parsedMessage.params, fd);
 	else if (parsedMessage.command == "TOPIC" || parsedMessage.command == "topic")
 		topicCmd(parsedMessage.params, fd);
-	else if (parsedMessage.command == "KICK" || parsedMessage.command == "Kick")
-		kickCmd(parsedMessage.params, fd);
+	else if (parsedMessage.command == "Kick" || parsedMessage.command == "KICK")
 /* 	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
 		modeCmd(parsedMessage.params, fd); */
 	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit")
@@ -354,4 +353,3 @@ void	Server::removeChannel(std::string channelName)
 		}
 	}
 }
-

@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:42:33 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 16:41:54 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ bool	Channel::isOpMember(int memberFd)
 void		Channel::setTopic(std::string topic){this->topic = topic;}
 std::string	Channel::getTopic(){return this->topic;}
 
-/* int		Channel::getFdFromNickname(std::string nickname) // connected clients pertenece a server como puedo llamarlo desde channel
+int		Channel::getFdFromNickname(std::string nickname)
 {
 	for (size_t i = 0; i < connectedClients.size(); i++)
 	{
@@ -84,4 +84,4 @@ std::string	Channel::getTopic(){return this->topic;}
 			return connectedClients[i].getSocket();
 	}
 	return -1;
-} */
+}

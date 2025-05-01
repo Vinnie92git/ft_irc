@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:37:58 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:46:50 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ class Channel
 		bool	removeMember(int memberFd);
 		void	addOpUser(int memberFd);
 		void	removeOpUser(int memberFd);
-		int		getFdFromNickname(std::string nickname);
 
 		std::vector<int>	getMembers();
 		std::string			getName();

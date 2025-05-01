@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:44:53 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 16:05:43 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,10 @@ void Server::kickCmd(std::vector<std::string>& params, int fd)
 		std::cout << "KICK error: Not enough parameters provided." << std::endl;
 		return;
 	}
+
+
 	std::cout << "entrasndo: " << params[0] << " " << params[1] << " "  << std::endl;
+
 	std::string channelNames = params[0];
 	std::string user = params[1];
 	std::string reason = "";
@@ -195,6 +198,8 @@ void Server::kickCmd(std::vector<std::string>& params, int fd)
 		else
 			std::cout << "KICK error: the user is not in the channel." << std::endl;
 	}
+
+
 }
 /*
 
@@ -451,7 +456,6 @@ void	Server::topicChannel(std::string channelName, std::string topic, int fd)
 
 void	Server::kickUserFromChannel(std::string channelName, std::string user, std::string reason, int fd)
 {
-	(void)user;
 	if (getChannel(channelName)->isMember(fd))
 	{
 		std::cout << "entrando" << std::endl;

@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:38:08 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:54:57 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -355,3 +355,12 @@ void	Server::removeChannel(std::string channelName)
 	}
 }
 
+int Server::getFdFromNickname(std::string nickname)
+{
+	for (size_t i = 0; i < connectedClients.size(); i++)
+	{
+		if (connectedClients[i].getNickname() == nickname)
+			return connectedClients[i].getSocket();
+	}
+	return -1;
+}

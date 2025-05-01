@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:44:53 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:48:10 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,10 @@ void Server::kickCmd(std::vector<std::string>& params, int fd)
 		std::cout << "KICK error: Not enough parameters provided." << std::endl;
 		return;
 	}
+
+
 	std::cout << "entrasndo: " << params[0] << " " << params[1] << " "  << std::endl;
+
 	std::string channelNames = params[0];
 	std::string user = params[1];
 	std::string reason = "";
@@ -189,12 +192,13 @@ void Server::kickCmd(std::vector<std::string>& params, int fd)
 		if (getChannel(channelName)->isOpMember(fd) == true)
 		{
 			//tegn oque obtener el fd del usuario y checker si el usuario está en el canal
-			//if (getChannel(channelName)->)
-			kickUserFromChannel(channelName, user, reason, fd);
+			kickChannel(channelName, user, reason, fd);
 		}
 		else
 			std::cout << "KICK error: the user is not in the channel." << std::endl;
 	}
+
+
 }
 /*
 
@@ -447,17 +451,4 @@ void	Server::topicChannel(std::string channelName, std::string topic, int fd)
 		si el topic es el mismo que el anterior se enviará el mensaje a todos lso usuarios del canal
 		*/
 	}
-}
-
-void	Server::kickUserFromChannel(std::string channelName, std::string user, std::string reason, int fd)
-{
-	(void)user;
-	if (getChannel(channelName)->isMember(fd))
-	{
-		std::cout << "entrando" << std::endl;
-		std::string kickMsg = getClient(fd)->getPrefix() + " KICK " + channelName + " " + user + " :" + reason + "\r\n";
-		send(getClient(fd)->getSocket(), kickMsg.c_str(), kickMsg.length(), 0);
-	}
-	else
-		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 }

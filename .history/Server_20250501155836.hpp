@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:37:14 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/01 15:58:36 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ public:
 	void		bootServer();
 	void		timestamp();
 	static void	signalHandler(int signal);
+	//int			getFdFromNickname(std::string nickname);
 
 	Client*		getClient(int fd);
 	Channel*	getChannel(std::string name);
