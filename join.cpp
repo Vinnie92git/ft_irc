@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 20:35:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 20:36:49 by vini             ###   ########.fr       */
+/*   Updated: 2025/05/05 22:19:30 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	Server::joinChannel(std::string channelName, int fd)
 	}
 
 	std::string joinMsg = getClient(fd)->getPrefix() + " JOIN :" + channelName + "\r\n";
-	std::string	topicMsg = ":server 332 " + getClient(fd)->getNickname() + " " + channelName + " :No topic is set\r\n";
+	std::string	topicMsg = ":server 332 " + getClient(fd)->getNickname() + " " + channelName + " :" + getChannel(channelName)->getTopic() + "\r\n";
 	std::string	namesMsg = ":server 353 " + getClient(fd)->getNickname() + " = " + channelName + " :";
 	for (size_t i = 0; i < getChannel(channelName)->getMembers().size(); i++)
 	{
@@ -46,14 +46,21 @@ void	Server::joinChannel(std::string channelName, int fd)
 
 void	Server::joinCmd(std::vector<std::string>& params, int fd)
 {
+	// Check if client is authenticated
+	if (!getClient(fd)->getAuthentication())
+	{
+		std::string authMsg = ":server 451 * :You have not registered\r\n";
+		send(getClient(fd)->getSocket(), authMsg.c_str(), authMsg.length(), 0);
+		return;
+	}
+
+	// Check channel names and try JOIN
 	if (params.empty())
 	{
 		std::cout << "JOIN error: No channel provided." << std::endl;
 		return ;
 	}
-
 	std::vector<std::string> channelNames = splitComma(params[0]);
-
 	for (size_t i = 0; i < channelNames.size(); i++)
 	{
 		std::string channelName = channelNames[i];

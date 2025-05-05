@@ -3,17 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 15:31:50 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/05 22:14:07 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
 Channel::Channel(){}
-Channel::Channel(std::string name) : name(name) {}
+Channel::Channel(std::string name) : name(name)
+{
+	this->topic = "No topic is set";
+}
 Channel::Channel(const Channel& toCopy){*this = toCopy;}
 Channel&	Channel::operator=(const Channel& toAssign)
 {
@@ -21,6 +24,8 @@ Channel&	Channel::operator=(const Channel& toAssign)
 	{
 		this->members = toAssign.members;
 		this->name = toAssign.name;
+		this->opUsers = toAssign.opUsers;
+		this->topic = toAssign.topic;
 	}
 	return *this;
 }
