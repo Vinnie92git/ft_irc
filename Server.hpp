@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:37:14 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/05 21:27:35 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ public:
 	void	setClientPassword(std::vector<std::string>& params, int fd);
 	void	setClientNickname(std::vector<std::string>& params, int fd);
 	void	setClientUsername(std::vector<std::string>& params, int fd);
+	void	tryAuthentication(int fd);
 	void	joinCmd(std::vector<std::string>& params, int fd);
 	void	partCmd(std::vector<std::string>& params, int fd);
 	void	quitCmd(std::vector<std::string>& params, int fd);

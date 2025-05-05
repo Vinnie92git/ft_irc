@@ -3,91 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 15:47:29 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/05 20:37:00 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-void	Server::setClientPassword(std::vector<std::string>& params, int fd)
-{
-	// Check if client already registered
-	if (getClient(fd)->getRegistration() == true)
-	{
-		std::string err = ":server 462 * :You may not reregister\r\n";
-		send(getClient(fd)->getSocket(), err.c_str(), err.length(), 0);
-		return;
-	}
-
-	// Check if PASS command has the required parameter
-	if (params.empty())
-	{
-		std::string errorMsg = ":server 461 * PASS :Not enough parameters\r\n";
-		send(getClient(fd)->getSocket(), errorMsg.c_str(), errorMsg.length(), 0);
-		return;
-	}
-
-	// Set password
-	getClient(fd)->setPassword(params[0]);
-
-	// Check password validity
-	if (serverPassword != "" && getClient(fd)->getPassword() != serverPassword)
-	{
-		std::string passMismatchMsg = ":server 464 * :Password incorrect\r\n";
-		send(getClient(fd)->getSocket(), passMismatchMsg.c_str(), passMismatchMsg.length(), 0);
-		return;
-	}
-
-	getClient(fd)->setRegistration(true);
-	std::cout << "Client " << fd << " password: " << getClient(fd)->getPassword() << std::endl;
-}
-
-void	Server::setClientNickname(std::vector<std::string>& params, int fd)
-{
-	for (size_t i = 0; i < connectedClients.size(); i++)
-	{
-		if (params[0] == connectedClients[i].getNickname())
-		{
-			std::string	nickInUseMsg = ":server 433 " + params[0] + " :Nickname is already in use\r\n";
-			send(getClient(fd)->getSocket(), nickInUseMsg.c_str(), nickInUseMsg.length(), 0);
-		}
-	}
-	getClient(fd)->setNickname(params[0]);
-	getClient(fd)->setPrefix(":" + getClient(fd)->getNickname() + "!user@localhost");
-	std::cout << "Client " << fd << " nickname: " << getClient(fd)->getNickname() << std::endl;
-	std::cout << "Client " << fd << " prefix: " << getClient(fd)->getPrefix() << std::endl;
-}
-
-void	Server::setClientUsername(std::vector<std::string>& params, int fd)
-{
-	getClient(fd)->setUsername(params[0]);
-	std::cout << "Client " << fd << " username: " << getClient(fd)->getUsername() << std::endl;
-}
-
-void	Server::joinCmd(std::vector<std::string>& params, int fd)
-{
-	if (params.empty())
-	{
-		std::cout << "JOIN error: No channel provided." << std::endl;
-		return ;
-	}
-
-	std::vector<std::string> channelNames = splitComma(params[0]);
-
-	for (size_t i = 0; i < channelNames.size(); i++)
-	{
-		std::string channelName = channelNames[i];
-		if (channelName[0] != '#')
-		{
-			std::cout << "JOIN error: Invalid channel name." << std::endl;
-			return ;
-		}
-		joinChannel(channelName, fd);
-	}
-}
 
 void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
 {
@@ -300,38 +223,6 @@ std::vector<std::string>	Server::splitComma(std::string param)
 	}
 
 	return tokenVector;
-}
-
-void	Server::joinChannel(std::string channelName, int fd)
-{
-	if (getChannel(channelName))
-	{
-		getChannel(channelName)->addMember(fd);
-		std::cout << "\033[32mClient \033[0m" << getClient(fd)->getSocket() << "\033[32m joined the channel \033[0m" << channelName << std::endl;
-	}
-	else
-	{
-		Channel	newChannel(channelName);
-		newChannel.addMember(fd);
-		channels.push_back(newChannel);
-		std::cout << "\033[32mClient \033[0m" << getClient(fd)->getSocket() << "\033[32m created the channel \033[0m" << channelName << std::endl;
-	}
-
-	std::string joinMsg = getClient(fd)->getPrefix() + " JOIN :" + channelName + "\r\n";
-	std::string	topicMsg = ":server 332 " + getClient(fd)->getNickname() + " " + channelName + " :No topic is set\r\n";
-	std::string	namesMsg = ":server 353 " + getClient(fd)->getNickname() + " = " + channelName + " :";
-	for (size_t i = 0; i < getChannel(channelName)->getMembers().size(); i++)
-	{
-		int	memberFd = getChannel(channelName)->getMembers()[i];
-		namesMsg += getClient(memberFd)->getNickname() + " ";
-	}
-	namesMsg += "\r\n";
-	std::string	endMsg = ":server 366 " + getClient(fd)->getNickname() + " " + channelName + " :End of /NAMES list\r\n";
-
-	send(getClient(fd)->getSocket(), joinMsg.c_str(), joinMsg.length(), 0);
-	send(getClient(fd)->getSocket(), topicMsg.c_str(), topicMsg.length(), 0);
-	send(getClient(fd)->getSocket(), namesMsg.c_str(), namesMsg.length(), 0);
-	send(getClient(fd)->getSocket(), endMsg.c_str(), endMsg.length(), 0);
 }
 
 /* void	Server::modeTarget(std::string channelName, std::vector<std::string>& params, int fd, int mode)

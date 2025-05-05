@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 01:03:48 by vini              #+#    #+#             */
-/*   Updated: 2025/04/30 11:33:51 by vini             ###   ########.fr       */
+/*   Updated: 2025/05/05 21:40:52 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ public:
 	void	setAddress(std::string address);
 	void	setSocket(int fd);
 	void	setRegistration(bool isRegistered);
+	void	setAuthentication(bool isAuthenticated);
 	void	addBannedChannels(std::vector<std::string> bannedChannels);
 	void	addOpChannels(std::vector<std::string> opChannels);
 
@@ -50,6 +51,7 @@ public:
 	std::string	getAddress();
 	int			getSocket();
 	bool		getRegistration();
+	bool		getAuthentication();
 	std::vector<std::string> getBannedChannels();
 	//faltaría uno para comprobar que esté baneado en el canal especifico que se le mande
 	std::vector<std::string> getopChannels();
@@ -65,6 +67,7 @@ private:
 	std::vector<std::string> opChannels;
 	bool		isOperator;
 	bool		isRegistered;
+	bool		isAuthenticated;
 	int			clientSocket;
 };
 

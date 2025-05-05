@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:38:08 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/05 21:14:50 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,6 @@ void	Server::acceptClient()
 	Client				newClient;
 	struct sockaddr_in	clientAddr;
 	socklen_t			addrLen = sizeof(clientAddr);
-	std::string			welcomeMsg = "Welcome to ft_irc! This is a debugging message, for now.\r\n";
 
 	// Accept incomming client connection
 	int	newFd = accept(serverSocket, (struct sockaddr *)&clientAddr, &addrLen);
@@ -220,13 +219,6 @@ void	Server::acceptClient()
 	timestamp();
 	std::cout << "\033[32mClient connected successfully.\033[0m" << std::endl;
 	std::cout << "\033[32mClient socket\033[0m -> " << newFd << std::endl;
-
-	// Send welcome message to newly connected client
-	if (send(newFd, welcomeMsg.c_str(), welcomeMsg.length(), MSG_NOSIGNAL) < 0)
-	{
-		std::cout << "\033[31;1mError: send().\033[0m" << std::endl;
-		return ;
-	}
 }
 
 void	Server::pollSockets()

@@ -6,7 +6,7 @@
 #    By: vini <vini@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/12 17:39:27 by vini              #+#    #+#              #
-#    Updated: 2025/04/02 13:13:48 by vini             ###   ########.fr        #
+#    Updated: 2025/05/05 20:37:48 by vini             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ RM = rm -f
 CC = c++
 CFLAGS = -Wall -Werror -Wextra -std=c++98
 # DEBUG = -g3 -fsanitize=address
-SRC = main.cpp Server.cpp Client.cpp Channel.cpp commands.cpp
+SRC = main.cpp Server.cpp Client.cpp Channel.cpp commands.cpp join.cpp registration.cpp
 
 OBJ_DIR = ./obj/
 OBJ_FILES = $(SRC:.cpp=.o)
