@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 15:47:29 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/05 14:49:03 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,11 +167,10 @@ void Server::kickCmd(std::vector<std::string>& params, int fd)
 		std::cout << "KICK error: Not enough parameters provided." << std::endl;
 		return;
 	}
-	//std::cout << "entrasndo: " << params[0] << " " << params[1] << " " << params[2]  << std::endl;
-	std::string channelNames = params[1];
-	std::string user = params[2];
+	std::cout << "entrasndo: " << params[0] << " " << params[1] << " "  << std::endl;
+	std::string channelNames = params[0];
+	std::string user = params[1];
 	std::string reason = "";
-	//std::cout << "entrasndo 2: " << channelNames << " " << user << " "  << std::endl;
 
 	if (params.size() > 2)
 		reason = params[2];
@@ -187,9 +186,10 @@ void Server::kickCmd(std::vector<std::string>& params, int fd)
 			std::cout << "KICK error: Invalid channel name." << std::endl;
 			return;
 		}
-		//getChannel(channelName)->addOpUser(fd); hasta que pueda añadir operadores de usuario tiene que descomentarse para funcionar
 		if (getChannel(channelName)->isOpMember(fd) == true)
 		{
+			//tegn oque obtener el fd del usuario y checker si el usuario está en el canal
+			//if (getChannel(channelName)->)
 			kickUserFromChannel(channelName, user, reason, fd);
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 15:31:50 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/05 14:43:40 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ Channel::~Channel(){}
 
 void	Channel::setName(std::string channelName){this->name = channelName;}
 void	Channel::addMember(int memberFd) {members.push_back(memberFd);}
-void	Channel::addOpUser(int memberFd) {opUsers.push_back(memberFd);}
 bool	Channel::removeMember(int memberFd)
 {
 	bool result = false;
