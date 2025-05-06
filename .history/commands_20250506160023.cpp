@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/06 16:40:56 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:00:23 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,30 +127,9 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 		std::cout << "INVITE error: Not enough parameters provided." << std::endl;
 		return;
 	}
-	std::string	user = params[0];
-	std::string	channelName = params[1];
-	int			userSocket = -1;
-	size_t		i = 0;
+	std::string user = params[0];
+	std::string channelName = params[1];
 
-	for (i = 0; i < connectedClients.size(); i++)
-	{
-		if (connectedClients[i].getNickname() == user)
-		{
-			std::cout << "El usuario existe" << std::endl;
-			userSocket = connectedClients[i].getSocket();
-			break;
-		}
-	}
-	if (userSocket == -1)
-	{
-		std::cout << "El usuario no existe" << std::endl;
-		return;
-	}
-	if (getChannel(channelName)->isMember(userSocket))
-	{
-		std::cout << "El usuario ya estaba en el canal" << std::endl;
-		return;
-	}
 	if (!getChannel(channelName))
 	{
 		std::cout << "INVITE error: Channel does not exist." << std::endl;
@@ -161,8 +140,9 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 		std::cout << "INVITE error: You are not in the channel." << std::endl;
 		return;
 	}
+
 	std::cout << "entrasndo: " << channelName << " " << user << " " <<  std::endl;
-	inviteUserToChannel(channelName, user, userSocket, fd);
+	inviteUserToChannel(channelName, user, fd);
 }
 
 /*
@@ -396,10 +376,13 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		if (connectedClients[i].getNickname() == user)
 			userSocket = connectedClients[i].getSocket();
 	}
+
 	if (userSocket != -1)
 		std::cout << "El socket para el nickname " << user << " es: " << userSocket << std::endl;
 	else
 		std::cout << "No se encontró el socket para el nickname " << user << std::endl;
+
+
 	if (getChannel(channelName)->isMember(fd) && getChannel(channelName)->isMember(userSocket))
 	{
 		std::cout << "entrando" << std::endl;
@@ -410,13 +393,16 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 }
 
-void Server::inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd)
+void	Server::inviteUserToChannel(std::string channelName, std::string user, int fd)
 {
-	// Envía un mensaje al usuario invitado para que se una al canal
-	std::string inviteMsg = ": INVITE " + user + " " + "to" + " " + channelName + "\r\n";
-	send(userSocket, inviteMsg.c_str(), inviteMsg.length(), 0);
-
-	// Envía un mensaje al usuario que invitó para confirmar la invitación
-	std::string confirmMsg =  getClient(fd)->getNickname() + " has invited " + user + " to the channel " + channelName + "\r\n";
-	send(fd, confirmMsg.c_str(), confirmMsg.length(), 0);
-  }
+	(void)channelName;
+	(void)user;
+	(void)fd;
+/* 	if (getChannel(channelName)->isMember(fd))
+	{
+		std::string inviteMsg = getClient(fd)->getPrefix() + " INVITE " + user + " " + channelName + "\r\n";
+		send(getClient(fd)->getSocket(), inviteMsg.c_str(), inviteMsg.length(), 0);
+	}
+	else
+		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl; */
+}

@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/06 16:41:25 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/06 14:21:37 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ public:
 	void	setClientPassword(std::vector<std::string>& params, int fd);
 	void	setClientNickname(std::vector<std::string>& params, int fd);
 	void	setClientUsername(std::vector<std::string>& params, int fd);
-	void	tryAuthentication(int fd);
 	void	joinCmd(std::vector<std::string>& params, int fd);
 	void	partCmd(std::vector<std::string>& params, int fd);
 	void	quitCmd(std::vector<std::string>& params, int fd);
@@ -69,7 +68,7 @@ public:
 	void	topicChannel(std::string channelName, std::string topic, int fd);
 	void	quitServer(std::string reason, int fd);
 	void	kickUserFromChannel(std::string channelName, std::string user, std::string reason, int fd);
-	void	inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd);
+	void	inviteToChannel(std::string channelName, std::string nickname, int fd);
 	//void	modeTarget(std::string channelName, std::vector<std::string>& params, int fd, int mode);
 
 	std::vector<std::string>	splitComma(std::string param);

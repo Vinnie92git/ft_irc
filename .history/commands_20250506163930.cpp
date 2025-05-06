@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/06 16:40:56 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:39:29 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 		return;
 	}
 	std::cout << "entrasndo: " << channelName << " " << user << " " <<  std::endl;
-	inviteUserToChannel(channelName, user, userSocket, fd);
+	inviteUserToChannel(channelName, user, fd);
 }
 
 /*
@@ -410,8 +410,21 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 }
 
-void Server::inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd)
+void	Server::inviteUserToChannel(std::string channelName, std::string user, int fd)
 {
+
+}
+
+void Server::inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd) {
+	// Busca el usuario en la lista de clientes conectados
+	int userSocket = -1;
+	for (size_t i = 0; i < connectedClients.size(); i++) {
+	  if (connectedClients[i].getNickname() == user) {
+		userSocket = connectedClients[i].getSocket();
+		break;
+	  }
+	}
+
 	// Envía un mensaje al usuario invitado para que se una al canal
 	std::string inviteMsg = ": INVITE " + user + " " + "to" + " " + channelName + "\r\n";
 	send(userSocket, inviteMsg.c_str(), inviteMsg.length(), 0);

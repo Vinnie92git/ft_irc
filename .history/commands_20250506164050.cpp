@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/06 16:40:56 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:40:50 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,6 +412,15 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 
 void Server::inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd)
 {
+	// Busca el usuario en la lista de clientes conectados
+	int userSocket = -1;
+	for (size_t i = 0; i < connectedClients.size(); i++) {
+	  if (connectedClients[i].getNickname() == user) {
+		userSocket = connectedClients[i].getSocket();
+		break;
+	  }
+	}
+
 	// Envía un mensaje al usuario invitado para que se una al canal
 	std::string inviteMsg = ": INVITE " + user + " " + "to" + " " + channelName + "\r\n";
 	send(userSocket, inviteMsg.c_str(), inviteMsg.length(), 0);
