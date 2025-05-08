@@ -6,12 +6,11 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/08 14:17:56 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/07 13:19:18 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include <vector>
 
 void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
 {
@@ -169,21 +168,7 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 // Parameters: <target>{,<target>} <text to be sent>
 void	Server::privmsgCmd(std::vector<std::string>& params, int fd)
 {
-	if (params.size() < 2)
-	{
-		std::cout << "PRIVMSG error: Not enough parameters provided." << std::endl;
-		return;
-	}
-	std::string	target = params[0];
-	std::string	message = params[1];
 
-	if (target[0] != '#')
-	{
-		std::cout << "KICK error: Invalid channel name." << std::endl;
-		return;
-	}
-	std::cout << "target: " << target << " " << "message: " << message <<  std::endl;
-	privmsg(target, message, fd);
 }
 
 //Command: MODE	target			+-
@@ -432,19 +417,4 @@ void Server::inviteUserToChannel(std::string channelName, std::string user, int 
 	// Envía un mensaje al usuario que invitó para confirmar la invitación
 	std::string confirmMsg =  getClient(fd)->getNickname() + " has invited " + user + " to the channel " + channelName + "\r\n";
 	send(fd, confirmMsg.c_str(), confirmMsg.length(), 0);
-}
-
-void Server::privmsg(std::string target, std::string message, int fd)
-{
-
-	std::string msg = getClient(fd)->getPrefix() + " PRIVMSG " + target + " :" + message + "\r\n";
-	//std::string msg = getClient(fd)->getPrefix() + " " + getChannel(target)->getName() + ": " + message + "\r\n";
-	//std::string msg = getClient(fd)->getNickname() + ": " + message + "\r\n";
-	//saber quienes son los usuarios del canal
-	std::vector<int> fdsChannel = getChannel(target)->getMembers();
-	for (size_t i = 0; i < fdsChannel.size(); i++)
-	{
-		if (fdsChannel[i] != fd)
-			send(fdsChannel[i], msg.c_str(), msg.length(), 0);
-	}
 }

@@ -6,12 +6,11 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/08 14:17:56 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/07 12:43:39 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include <vector>
 
 void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
 {
@@ -59,13 +58,14 @@ void	Server::topicCmd(std::vector<std::string>& params, int fd)
 		std::cout << "PART error: No channel provided." << std::endl;
 		return;
 	}
-	std::cout << "entrasndo: " << params[0] << std::endl;
+	std::cout << "entrasndo: " << params[0] << " " << params[1] << std::endl;
 
-	std::vector<std::string> channelNames = splitComma(params[0]);
+	std::vector<std::string> channelNames = splitComma(params[1]);
 	std::string channelName = channelNames[0];
 	std::string topic = "not set";
-	if (params.size() > 1)
-		topic = splitComma(params[1])[0];
+
+	if (params.size() >= 2)
+		std::string topic = splitComma(params[1])[0];
 
 	std::cout << "topic: " << topic  << "|| " << "channelNames: " << channelName << std::endl;
 
@@ -166,30 +166,13 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 	inviteUserToChannel(channelName, user, userSocket, fd);
 }
 
-// Parameters: <target>{,<target>} <text to be sent>
-void	Server::privmsgCmd(std::vector<std::string>& params, int fd)
-{
-	if (params.size() < 2)
-	{
-		std::cout << "PRIVMSG error: Not enough parameters provided." << std::endl;
-		return;
-	}
-	std::string	target = params[0];
-	std::string	message = params[1];
+/*
 
-	if (target[0] != '#')
-	{
-		std::cout << "KICK error: Invalid channel name." << std::endl;
-		return;
-	}
-	std::cout << "target: " << target << " " << "message: " << message <<  std::endl;
-	privmsg(target, message, fd);
-}
+Command: MODE	target			+-
+  Parameters: <canal/user> [<modestring> [<mode arguments>...]]
+	MODE #foobar +mb *@127.0.0.1
 
-//Command: MODE	target			+-
-//  Parameters: <canal/user> [<modestring> [<mode arguments>...]]
-//	MODE #foobar +mb *@127.0.0.1
-
+*/
 /* void Server::modeCmd(std::vector<std::string>& params, int fd)
 {
 	if (params.empty())
@@ -312,7 +295,7 @@ std::vector<std::string>	Server::splitComma(std::string param)
 		}
 	}
 }
-*/
+	*/
 
 void	Server::partChannel(std::string channelName, std::string reason, int fd)
 {
@@ -357,6 +340,11 @@ void	Server::quitServer(std::string reason, int fd)
 
 void	Server::topicChannel(std::string channelName, std::string topic, int fd)
 {
+	/*
+	si el topic está protegido tendría que tener permisos para modificarlo
+
+	*/
+	// si el canal no existe no puedes hacer nada
 	if (!getChannel(channelName))
 	{
 		std::cout << "_____________-1_______________" << std::endl;
@@ -432,19 +420,4 @@ void Server::inviteUserToChannel(std::string channelName, std::string user, int 
 	// Envía un mensaje al usuario que invitó para confirmar la invitación
 	std::string confirmMsg =  getClient(fd)->getNickname() + " has invited " + user + " to the channel " + channelName + "\r\n";
 	send(fd, confirmMsg.c_str(), confirmMsg.length(), 0);
-}
-
-void Server::privmsg(std::string target, std::string message, int fd)
-{
-
-	std::string msg = getClient(fd)->getPrefix() + " PRIVMSG " + target + " :" + message + "\r\n";
-	//std::string msg = getClient(fd)->getPrefix() + " " + getChannel(target)->getName() + ": " + message + "\r\n";
-	//std::string msg = getClient(fd)->getNickname() + ": " + message + "\r\n";
-	//saber quienes son los usuarios del canal
-	std::vector<int> fdsChannel = getChannel(target)->getMembers();
-	for (size_t i = 0; i < fdsChannel.size(); i++)
-	{
-		if (fdsChannel[i] != fd)
-			send(fdsChannel[i], msg.c_str(), msg.length(), 0);
-	}
 }

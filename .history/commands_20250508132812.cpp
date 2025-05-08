@@ -6,12 +6,11 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/08 14:17:56 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/08 13:28:12 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include <vector>
 
 void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
 {
@@ -437,14 +436,13 @@ void Server::inviteUserToChannel(std::string channelName, std::string user, int 
 void Server::privmsg(std::string target, std::string message, int fd)
 {
 
-	std::string msg = getClient(fd)->getPrefix() + " PRIVMSG " + target + " :" + message + "\r\n";
-	//std::string msg = getClient(fd)->getPrefix() + " " + getChannel(target)->getName() + ": " + message + "\r\n";
-	//std::string msg = getClient(fd)->getNickname() + ": " + message + "\r\n";
+	std::string msg = getClient(fd)->getPrefix() + ": " + message + "\r\n";
 	//saber quienes son los usuarios del canal
-	std::vector<int> fdsChannel = getChannel(target)->getMembers();
-	for (size_t i = 0; i < fdsChannel.size(); i++)
+	for (int fdChannelUser : getChannel(target)->getMembers())
 	{
-		if (fdsChannel[i] != fd)
-			send(fdsChannel[i], msg.c_str(), msg.length(), 0);
+		if (fdChannelUser != fd)
+			send(fdChannelUser, msg.c_str(), msg.length(), 0);
 	}
+
+
 }

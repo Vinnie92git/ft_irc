@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/08 12:35:13 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/07 13:02:20 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ public:
 	void	quitServer(std::string reason, int fd);
 	void	kickUserFromChannel(std::string channelName, std::string user, std::string reason, int fd);
 	void	inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd);
-	void	privmsg(std::string target, std::string message, int fd);
+	void	privmsgUser(std::string target, std::string message, int fd);
 	//void	modeTarget(std::string channelName, std::vector<std::string>& params, int fd, int mode);
 
 	std::vector<std::string>	splitComma(std::string param);
