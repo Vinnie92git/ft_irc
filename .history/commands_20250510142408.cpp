@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/10 14:53:45 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/10 14:24:08 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,11 +176,7 @@ void	Server::privmsgCmd(std::vector<std::string>& params, int fd) //
 	}
 	std::string	target = params[0];
 	std::vector<std::string> targets = splitComma(target);
-	std::string	message = "";
-	for (size_t i = 1; i < params.size(); i++)
-	{
-		message += params[i] + " ";
-	}
+	std::string	message = params[1];
 
 	std::cout << "target: " << target << " " << "message: " << message <<  std::endl;
 
@@ -465,7 +461,6 @@ void	Server::privMsgUser(std::string target, std::string message, int fd)
 		if (connectedClients[i].getNickname() == target)
 		{
 			std::cout << "El usuario existe" << std::endl;
-			send(fd, msg.c_str(), msg.length(), 0); // esto ha que checkearlo
 			send(connectedClients[i].getSocket(), msg.c_str(), msg.length(), 0);
 		}
 	}

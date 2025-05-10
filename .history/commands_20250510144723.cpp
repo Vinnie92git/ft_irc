@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/10 14:53:45 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/10 14:47:23 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -465,7 +465,7 @@ void	Server::privMsgUser(std::string target, std::string message, int fd)
 		if (connectedClients[i].getNickname() == target)
 		{
 			std::cout << "El usuario existe" << std::endl;
-			send(fd, msg.c_str(), msg.length(), 0); // esto ha que checkearlo
+			send(fd, msg.c_str(), msg.length(), 0);
 			send(connectedClients[i].getSocket(), msg.c_str(), msg.length(), 0);
 		}
 	}

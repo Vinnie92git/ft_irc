@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:53:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/10 14:53:45 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/09 13:12:01 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 }
 
 // Parameters: <target>{,<target>} <text to be sent>
-void	Server::privmsgCmd(std::vector<std::string>& params, int fd) //
+void	Server::privmsgCmd(std::vector<std::string>& params, int fd)
 {
 	if (params.size() < 2)
 	{
@@ -175,31 +175,24 @@ void	Server::privmsgCmd(std::vector<std::string>& params, int fd) //
 		return;
 	}
 	std::string	target = params[0];
-	std::vector<std::string> targets = splitComma(target);
-	std::string	message = "";
-	for (size_t i = 1; i < params.size(); i++)
-	{
-		message += params[i] + " ";
-	}
+	std::string	message = params[1];
 
+	//si el target es un usuario no combrobar que sea un canal
+	for (i = 0; i < connectedClients.size(); i++)
+	{
+		if (connectedClients[i].getNickname() == target)
+		{
+			std::cout << "El usuario existe" << std::endl;
+			privmsg(target,message,fd);
+		}
+	}
+	if (target[0] != '#')
+	{
+		std::cout << "KICK error: Invalid channel name." << std::endl;
+		return;
+	}
 	std::cout << "target: " << target << " " << "message: " << message <<  std::endl;
-
-	for (size_t i = 0; i < targets.size(); i++)
-	{
-		std::string trg = targets[i];
-		if (trg[0] == '#' || trg[0] == '&')
-		{
-			std::cout << "entrando en el canal" << std::endl;
-			privMsgChannel(target, message, fd);
-		}
-		else
-		{
-			std::cout << "entrando en el usuario" << std::endl;
-			privMsgUser(target, message, fd);
-		}
-	}
-	std::cout << "PRIVMSG error: Invalid target." << std::endl;
-	return;
+	privmsg(target, message, fd);
 }
 
 //Command: MODE	target			+-
@@ -443,30 +436,27 @@ void Server::inviteUserToChannel(std::string channelName, std::string user, int 
 	send(fd, confirmMsg.c_str(), confirmMsg.length(), 0);
 }
 
-void Server::privMsgChannel(std::string target, std::string message, int fd)
+void Server::privmsg(std::string target, std::string message, int fd)
 {
-	std::string msg = getClient(fd)->getPrefix() + " PRIVMSG " + target + " :" + message + "\r\n";
-	std::vector<int> fdsChannel = getChannel(target)->getMembers();
 
+	std::string msg = getClient(fd)->getPrefix() + " PRIVMSG " + target + " :" + message + "\r\n";
+	//std::string msg = getClient(fd)->getPrefix() + " " + getChannel(target)->getName() + ": " + message + "\r\n";
+	//std::string msg = getClient(fd)->getNickname() + ": " + message + "\r\n";
+	//saber quienes son los usuarios del canal
+	std::vector<int> fdsChannel = getChannel(target)->getMembers();
 	for (size_t i = 0; i < fdsChannel.size(); i++)
 	{
 		if (fdsChannel[i] != fd)
 			send(fdsChannel[i], msg.c_str(), msg.length(), 0);
 	}
-	std::cout << "El canal no existe" << std::endl;
-}
-
-void	Server::privMsgUser(std::string target, std::string message, int fd)
-{
-	std::string msg = getClient(fd)->getPrefix() + " PRIVMSG " + target + " :" + message + "\r\n";
-
-	for (size_t i = 0; i < connectedClients.size(); i++)
+	for (int i = 0; i < connectedClients.size(); i++)
 	{
 		if (connectedClients[i].getNickname() == target)
 		{
 			std::cout << "El usuario existe" << std::endl;
-			send(fd, msg.c_str(), msg.length(), 0); // esto ha que checkearlo
 			send(connectedClients[i].getSocket(), msg.c_str(), msg.length(), 0);
+			break;
 		}
 	}
+	std::cout << "El target no existe" << std::endl;
 }
