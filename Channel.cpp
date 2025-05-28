@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 22:14:07 by vini             ###   ########.fr       */
+/*   Updated: 2025/05/29 00:24:04 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@ Channel::Channel(){}
 Channel::Channel(std::string name) : name(name)
 {
 	this->topic = "No topic is set";
+	this->inviteOnly = false;
+	this->topicRestricted = false;
+	this->userLimit = 0;
+	this->key = "";
 }
 Channel::Channel(const Channel& toCopy){*this = toCopy;}
 Channel&	Channel::operator=(const Channel& toAssign)
@@ -26,14 +30,28 @@ Channel&	Channel::operator=(const Channel& toAssign)
 		this->name = toAssign.name;
 		this->opUsers = toAssign.opUsers;
 		this->topic = toAssign.topic;
+		this->inviteOnly = toAssign.inviteOnly;
+		this->topicRestricted = toAssign.topicRestricted;
+		this->userLimit = toAssign.userLimit;
+		this->key = toAssign.key;
 	}
 	return *this;
 }
 Channel::~Channel(){}
 
 void	Channel::setName(std::string channelName){this->name = channelName;}
-void	Channel::addMember(int memberFd) {members.push_back(memberFd);}
-void	Channel::addOpUser(int memberFd) {opUsers.push_back(memberFd);}
+void	Channel::addMember(int memberFd)
+{
+	if (!isMember(memberFd))
+		members.push_back(memberFd);
+}
+
+void	Channel::addOpUser(int memberFd)
+{
+	if (!isOpMember(memberFd))
+		opUsers.push_back(memberFd);
+}
+
 bool	Channel::removeMember(int memberFd)
 {
 	bool result = false;
@@ -41,6 +59,7 @@ bool	Channel::removeMember(int memberFd)
 		if (members[i] == memberFd)
 		{
 			members.erase(members.begin() + i);
+			removeOpUser(memberFd);
 			result = true;
 		}
 
@@ -48,6 +67,18 @@ bool	Channel::removeMember(int memberFd)
 	// std::vector<int>::iterator it = std::find(members.begin(), members.end(), memberFd);
 	// if (it != members.end())
 	// 	members.erase(it);
+	return (result);
+}
+
+bool	Channel::removeOpUser(int memberFd)
+{
+	bool result = false;
+	for (size_t i = 0; i < opUsers.size(); i++)
+		if (opUsers[i] == memberFd)
+		{
+			opUsers.erase(opUsers.begin() + i);
+			result = true;
+		}
 	return (result);
 }
 std::vector<int>	Channel::getMembers() {return this->members;}
@@ -82,3 +113,63 @@ bool	Channel::isOpMember(int memberFd)
 void		Channel::setTopic(std::string topic){this->topic = topic;}
 std::string	Channel::getTopic(){return this->topic;}
 
+void	Channel::setInviteOnly(bool value)
+{
+	inviteOnly = value;
+}
+
+bool	Channel::getInviteOnly() const
+{
+	return inviteOnly;
+}
+
+
+void Channel::setTopicRestricted(bool value)
+{
+	topicRestricted = value;
+}
+
+bool Channel::getTopicRestricted() const
+{
+	return topicRestricted;
+}
+
+void Channel::setKey(const std::string& newKey)
+{
+	key = newKey;
+}
+
+void Channel::removeKey()
+{
+	key = "";
+}
+
+std::string Channel::getKey() const
+{
+	return key;
+}
+
+bool Channel::hasKey() const
+{
+	return !key.empty();
+}
+
+void Channel::setUserLimit(size_t limit)
+{
+	userLimit = limit;
+}
+
+void Channel::removeUserLimit()
+{
+	userLimit = 0;
+}
+
+size_t Channel::getUserLimit() const
+{
+	return userLimit;
+}
+
+bool Channel::hasUserLimit() const
+{
+	return userLimit > 0;
+}

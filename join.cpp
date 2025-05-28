@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 20:35:20 by vini              #+#    #+#             */
-/*   Updated: 2025/05/05 22:19:30 by vini             ###   ########.fr       */
+/*   Updated: 2025/05/29 00:32:55 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	Server::joinChannel(std::string channelName, int fd)
 	{
 		Channel	newChannel(channelName);
 		newChannel.addMember(fd);
+		newChannel.addOpUser(fd);
 		channels.push_back(newChannel);
 		std::cout << "\033[32mClient \033[0m" << getClient(fd)->getSocket() << "\033[32m created the channel \033[0m" << channelName << std::endl;
 	}
@@ -33,6 +34,8 @@ void	Server::joinChannel(std::string channelName, int fd)
 	for (size_t i = 0; i < getChannel(channelName)->getMembers().size(); i++)
 	{
 		int	memberFd = getChannel(channelName)->getMembers()[i];
+		if (getChannel(channelName)->isOpMember(memberFd))
+        	namesMsg += "@";
 		namesMsg += getClient(memberFd)->getNickname() + " ";
 	}
 	namesMsg += "\r\n";

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
-/*   Updated: 2025/05/01 16:37:58 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/28 23:16:47 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,23 +40,44 @@ class Channel
 		void	addMember(int memberFd);
 		bool	removeMember(int memberFd);
 		void	addOpUser(int memberFd);
-		void	removeOpUser(int memberFd);
+		bool	removeOpUser(int memberFd);
 		int		getFdFromNickname(std::string nickname);
 
 		std::vector<int>	getMembers();
 		std::string			getName();
-		std::vector<int>	getOpUsers();
+		// std::vector<int>	getOpUsers();
 
 		bool		isMember(int memberFd);
 		bool		isOpMember(int memberFd);
 		void		setTopic(std::string topic);
 		std::string	getTopic();
 
+		void		setInviteOnly(bool value);
+		bool		getInviteOnly() const;
+
+		void		setTopicRestricted(bool value);
+		bool		getTopicRestricted() const;
+
+		void		setKey(const std::string& newKey);
+		void		removeKey();
+		std::string	getKey() const;
+		bool		hasKey() const;
+
+		void		setUserLimit(size_t limit);
+		void		removeUserLimit();
+		size_t		getUserLimit() const;
+		bool		hasUserLimit() const;
+
+
 	private:
-		std::vector<int>	members;
 		std::string			name;
-		std::vector<int>	opUsers;
 		std::string			topic;
+		std::string			key;
+		std::vector<int>	members;
+		std::vector<int>	opUsers;
+		bool				inviteOnly;
+		bool				topicRestricted;
+		size_t				userLimit;
 };
 
 #endif

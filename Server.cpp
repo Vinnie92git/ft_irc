@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/05/07 13:02:33 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/28 23:15:08 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,8 @@ void	Server::parseMessage(std::string& message, int fd)
 		inviteCmd(parsedMessage.params, fd);
 	else if (parsedMessage.command == "PRIVMSG" || parsedMessage.command == "privmsg")
 		privmsgCmd(parsedMessage.params, fd);
-/* 	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
-		modeCmd(parsedMessage.params, fd); */
+	else if (parsedMessage.command == "MODE" || parsedMessage.command == "mode")
+		modeCmd(parsedMessage.params, fd);
 	else if (parsedMessage.command == "EXIT" || parsedMessage.command == "exit")
 		std::cout << "Client disconnecting..." << std::endl;
 	else
@@ -329,6 +329,14 @@ Channel*	Server::getChannel(std::string name)
 			return &this->channels[i];
 	}
 	return NULL;
+}
+int			Server::getClientFd(std::string& nickname)
+{
+	for (size_t i = 0; i < connectedClients.size(); ++i) {
+        if (connectedClients[i].getNickname() == nickname)
+            return connectedClients[i].getSocket();
+    }
+    return -1;
 }
 
 bool	Server::signal = false;

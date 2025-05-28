@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/09 13:28:36 by roberto          ###   ########.fr       */
+/*   Updated: 2025/05/28 23:17:28 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ public:
 	void	kickCmd(std::vector<std::string>& params, int fd);
 	void	inviteCmd(std::vector<std::string>& params, int fd);
 	void	privmsgCmd(std::vector<std::string>& params, int fd);
+	void 	modeCmd(std::vector<std::string>& params, int fd);
 	//void	modeCmd(std::vector<std::string>& params, int fd);
 	void	joinChannel(std::string channelName, int fd);
 	void	partChannel(std::string channelName, std::string reason, int fd);
@@ -92,6 +93,7 @@ public:
 
 	Client*		getClient(int fd);
 	Channel*	getChannel(std::string name);
+	int			getClientFd(std::string& nickname);
 
 private:
 	std::vector<struct pollfd>	pollFds;
