@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/05/28 23:15:08 by vini             ###   ########.fr       */
+/*   Updated: 2025/06/04 17:53:41 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,3 +359,17 @@ void	Server::removeChannel(std::string channelName)
 	}
 }
 
+std::vector<std::string>	Server::splitComma(std::string param)
+{
+	std::vector<std::string>	tokenVector;
+	std::istringstream			iss(param);
+	std::string					token;
+
+	while(std::getline(iss, token, ','))
+	{
+		if (!token.empty())
+			tokenVector.push_back(token);
+	}
+
+	return tokenVector;
+}

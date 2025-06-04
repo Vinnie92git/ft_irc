@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 22:25:39 by vini              #+#    #+#             */
-/*   Updated: 2025/05/28 23:14:26 by vini             ###   ########.fr       */
+/*   Updated: 2025/06/04 17:43:50 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,14 @@
 
 void Server::modeCmd(std::vector<std::string>& params, int fd)
 {
+	// Check if client is authenticated
+	if (!getClient(fd)->getAuthentication())
+	{
+		std::string authMsg = ":server 451 * :You have not registered\r\n";
+		send(getClient(fd)->getSocket(), authMsg.c_str(), authMsg.length(), 0);
+		return;
+	}
+
 	if (params.size() < 2)
 		return;
 

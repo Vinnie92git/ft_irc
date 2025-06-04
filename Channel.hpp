@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
-/*   Updated: 2025/05/28 23:16:47 by vini             ###   ########.fr       */
+/*   Updated: 2025/06/04 18:22:30 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ class Channel
 		size_t		getUserLimit() const;
 		bool		hasUserLimit() const;
 
+		bool		isInvited(int fd) const;
+		void		inviteClient(int fd);
+		void		removeInvite(int fd);
+
 
 	private:
 		std::string			name;
@@ -75,6 +79,7 @@ class Channel
 		std::string			key;
 		std::vector<int>	members;
 		std::vector<int>	opUsers;
+		std::vector<int>	invitedClients;
 		bool				inviteOnly;
 		bool				topicRestricted;
 		size_t				userLimit;

@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:32:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/29 00:24:04 by vini             ###   ########.fr       */
+/*   Updated: 2025/06/04 18:34:00 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,6 @@ bool	Channel::getInviteOnly() const
 	return inviteOnly;
 }
 
-
 void Channel::setTopicRestricted(bool value)
 {
 	topicRestricted = value;
@@ -172,4 +171,32 @@ size_t Channel::getUserLimit() const
 bool Channel::hasUserLimit() const
 {
 	return userLimit > 0;
+}
+
+bool Channel::isInvited(int fd) const
+{
+	for (size_t i = 0; i < invitedClients.size(); ++i)
+		if (invitedClients[i] == fd)
+			return true;
+	return false;
+}
+
+void Channel::inviteClient(int fd)
+{
+	for (size_t i = 0; i < invitedClients.size(); ++i)
+		if (invitedClients[i] == fd)
+			return;
+	invitedClients.push_back(fd);
+}
+
+void Channel::removeInvite(int fd)
+{
+	for (std::vector<int>::iterator it = invitedClients.begin(); it != invitedClients.end(); ++it)
+	{
+		if (*it == fd)
+		{
+			invitedClients.erase(it);
+			break;
+		}
+	}
 }

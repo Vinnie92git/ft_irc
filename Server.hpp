@@ -6,7 +6,7 @@
 /*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:56 by vini              #+#    #+#             */
-/*   Updated: 2025/05/28 23:17:28 by vini             ###   ########.fr       */
+/*   Updated: 2025/06/04 18:50:38 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ public:
 	void	privmsgCmd(std::vector<std::string>& params, int fd);
 	void 	modeCmd(std::vector<std::string>& params, int fd);
 	//void	modeCmd(std::vector<std::string>& params, int fd);
+	bool	canJoinChannel(Client& client, Channel& channel, const std::string& providedKey, std::string& errorMsg);
 	void	joinChannel(std::string channelName, int fd);
 	void	partChannel(std::string channelName, std::string reason, int fd);
 	void	topicChannel(std::string channelName, std::string topic, int fd);
