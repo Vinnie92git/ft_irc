@@ -15,11 +15,12 @@
 void Server::inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd)
 {
 	// Envía un mensaje al usuario invitado para que se una al canal
-	std::string inviteMsg = ": INVITE " + user + " " + "to" + " " + channelName + "\r\n";
+	std::string inviteMsg = "You have been invited to " + channelName + " by " + getClient(fd)->getNickname() + "\r\n";
+	std::cout << "inviteMsg: " << inviteMsg << std::endl;
 	send(userSocket, inviteMsg.c_str(), inviteMsg.length(), 0);
 
 	// Envía un mensaje al usuario que invitó para confirmar la invitación
-	std::string confirmMsg =  getClient(fd)->getNickname() + " has invited " + user + " to the channel " + channelName + "\r\n";
+	std::string confirmMsg = ":server 341 " + getClient(fd)->getNickname() + " " + user + " " + channelName  + "\r\n";
 	send(fd, confirmMsg.c_str(), confirmMsg.length(), 0);
 
 	getChannel(channelName)->inviteClient(userSocket);
@@ -58,14 +59,14 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 		std::cout << "El usuario no existe" << std::endl;
 		return;
 	}
-	if (getChannel(channelName)->isMember(userSocket))
-	{
-		std::cout << "El usuario ya estaba en el canal" << std::endl;
-		return;
-	}
 	if (!getChannel(channelName))
 	{
 		std::cout << "INVITE error: Channel does not exist." << std::endl;
+		return;
+	}
+	if (getChannel(channelName)->isMember(userSocket))
+	{
+		std::cout << "El usuario ya estaba en el canal" << std::endl;
 		return;
 	}
 	if (!getChannel(channelName)->isMember(fd))
@@ -73,6 +74,6 @@ void	Server::inviteCmd(std::vector<std::string>& params, int fd)
 		std::cout << "INVITE error: You are not in the channel." << std::endl;
 		return;
 	}
-	std::cout << "entrasndo: " << channelName << " " << user << " " <<  std::endl;
+	std::cout << "entrando: " << channelName << " " << user << " " <<  std::endl;
 	inviteUserToChannel(channelName, user, userSocket, fd);
 }
