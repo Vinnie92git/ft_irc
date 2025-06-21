@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 22:25:39 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:40:12 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/20 14:05:12 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 
 void Server::modeCmd(std::vector<std::string>& params, int fd)
 {
+	std::cout << "estas entrando?" << std::endl;
+	// Check if client is authenticated
 	if (!getClient(fd)->getAuthentication())
 	{
+	std::cout << "___________1____________" << std::endl;
+
 		std::string authMsg = ":server 451 * :You have not registered\r\n";
 		send(getClient(fd)->getSocket(), authMsg.c_str(), authMsg.length(), 0);
 		return;
@@ -129,6 +133,7 @@ void Server::modeCmd(std::vector<std::string>& params, int fd)
 
 	modeReply += " " + modeArgs + "\r\n";
 
+	// Broadcast to all clients in the channel
 	std::vector<int> members = channel->getMembers();
 		for (size_t i = 0; i < members.size(); ++i)
 		{

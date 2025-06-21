@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:47:21 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:43:03 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:31:01 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,6 @@ void	Server::topicChannel(std::string channelName, std::string topic, int fd)
 		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 		return;
 	}
-	if (getChannel(channelName)->getTopicRestricted() && !getChannel(channelName)->isOpMember(fd))
-    {
-        std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, no tienes permiso para cambiar el topic\033[0m" << std::endl;
-        return;
-    }
 	if (topic.empty() || topic[0] == ':')
 	{
 		std::string	topicMsg = ":server 332 " + getClient(fd)->getNickname() + " " + channelName + " :No topic is set\r\n";
@@ -84,3 +79,9 @@ void	Server::topicCmd(std::vector<std::string>& params, int fd)
 		topicChannel(channelName, topic, fd);
 	}
 }
+
+/*
+If the protected topic mode is set on a channel, then clients MUST have appropriate channel permissions to modify the topic
+of that channel. If a client does not have appropriate channel permissions and tries to change the topic,
+the ERR_CHANOPRIVSNEEDED (482) numeric is returned and the command will fail.
+*/

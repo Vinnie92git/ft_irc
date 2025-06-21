@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:42:43 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:42:34 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,18 +253,22 @@ void	Server::initSocket()
 	if (fcntl(serverSocket, F_SETFL, O_NONBLOCK) < 0)
 		throw std::runtime_error("\033[31;1mError: failed to create non-blocking socket.\033[0m");
 
+	// Bind the socket to IP address and Port
 	if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
 		throw std::runtime_error("\033[31;1mError: failed to bind server socket.\033[0m");
 
+	// Enable the socket to listen to incomming connections
 	if (listen(serverSocket, BACKLOG) < 0)
 		throw std::runtime_error("\033[31;1mError: server socket not listening.\033[0m");
 
+	// Add the socket to the pool of monitored fds
 	struct pollfd	serverPoll;
 	serverPoll.fd = serverSocket;
 	serverPoll.events = POLLIN;
 	serverPoll.revents = 0;
 	pollFds.push_back(serverPoll);
 
+	// Display server address info
 	inet_ntop(AF_INET, &serverAddr.sin_addr, serverIP, INET_ADDRSTRLEN);
 	std::cout << "\033[32;1m----------SERVER ONLINE----------\033[0m" << std::endl;
 	std::cout << "\033[32mServer socket\033[0m -> " << serverSocket << std::endl;

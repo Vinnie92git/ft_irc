@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:47:15 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:40:59 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:40:56 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ void	Server::quitServer(std::string reason, int fd)
 			--i;
 		}
 	}
+
+	// Finally send QUIT to the quitting client itself
 	send(quittingClient->getSocket(), quitMsg.c_str(), quitMsg.length(), 0);
 }
 

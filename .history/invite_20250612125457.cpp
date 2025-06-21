@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:46:50 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:38:23 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/04 18:31:42 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 void Server::inviteUserToChannel(std::string channelName, std::string user, int userSocket, int fd)
 {
+	// Envía un mensaje al usuario invitado para que se una al canal
 	std::string inviteMsg = "You have been invited to " + channelName + " by " + getClient(fd)->getNickname() + "\r\n";
 	std::cout << "inviteMsg: " << inviteMsg << std::endl;
 	send(userSocket, inviteMsg.c_str(), inviteMsg.length(), 0);
 
+	// Envía un mensaje al usuario que invitó para confirmar la invitación
 	std::string confirmMsg = ":server 341 " + getClient(fd)->getNickname() + " " + user + " " + channelName  + "\r\n";
 	send(fd, confirmMsg.c_str(), confirmMsg.length(), 0);
 

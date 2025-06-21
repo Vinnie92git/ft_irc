@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:46:58 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:39:12 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:39:04 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,14 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		return;
 	}
 
+	// Check if kicker is an operator
 	if (!channel->isOpMember(fd))
 	{
 		std::cout << "KICK error: You are not an operator in " << channelName << std::endl;
 		return;
 	}
 
+	// Build and send KICK message to kicked user and broadcast to other users
 	std::string prefix = getClient(fd)->getPrefix();
 	std::string kickMsg = prefix + " KICK " + channelName + " " + user;
 	if (!reason.empty())

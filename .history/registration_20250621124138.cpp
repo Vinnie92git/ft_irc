@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 20:35:29 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:41:40 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:41:38 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ void	Server::setClientUsername(std::vector<std::string>& params, int fd)
 		return;
 	}
 
+	// Set username and prefix
 	getClient(fd)->setUsername(params[0]);
 	if (!getClient(fd)->getNickname().empty())
 		getClient(fd)->setPrefix(":" + getClient(fd)->getNickname() + "!" + getClient(fd)->getUsername() + "@localhost");

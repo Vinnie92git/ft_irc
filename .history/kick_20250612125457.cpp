@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:46:58 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:39:12 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/04 20:24:05 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		return;
 	}
 
+	// Find user socket by nickname
 	int userSocket = -1;
 	for (size_t i = 0; i < connectedClients.size(); i++)
 	{
@@ -36,6 +37,8 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		std::cout << "KICK error: User " << user << " not found." << std::endl;
 		return;
 	}
+
+	// Check if kicker and kicked user are members of channel
 	if (!channel->isMember(fd))
 	{
 		std::cout << "KICK error: You are not a member of " << channelName << std::endl;
@@ -47,12 +50,14 @@ void	Server::kickUserFromChannel(std::string channelName, std::string user, std:
 		return;
 	}
 
+	// Check if kicker is an operator
 	if (!channel->isOpMember(fd))
 	{
 		std::cout << "KICK error: You are not an operator in " << channelName << std::endl;
 		return;
 	}
 
+	// Build and send KICK message to kicked user and broadcast to other users
 	std::string prefix = getClient(fd)->getPrefix();
 	std::string kickMsg = prefix + " KICK " + channelName + " " + user;
 	if (!reason.empty())

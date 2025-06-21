@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:47:21 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:43:03 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:33:15 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	Server::topicChannel(std::string channelName, std::string topic, int fd)
 		std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, you are not in \033[0m" << channelName << std::endl;
 		return;
 	}
-	if (getChannel(channelName)->getTopicRestricted() && !getChannel(channelName)->isOpMember(fd))
+	if (getChannel(channelName)->getTopicRestricted() && !channel->isOpMember(fd))
     {
         std::cout << "\033[31mClient \033[0m" << getClient(fd)->getSocket() << "\033[31m, no tienes permiso para cambiar el topic\033[0m" << std::endl;
         return;

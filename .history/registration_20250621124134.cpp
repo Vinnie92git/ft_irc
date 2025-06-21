@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 20:35:29 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:41:40 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:41:34 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ void	Server::setClientUsername(std::vector<std::string>& params, int fd)
 		return;
 	}
 
+	// Check if user already has username
 	if (!getClient(fd)->getUsername().empty())
 	{
 		std::string reregisterMsg = ":server 462 * :You may not reregister\r\n";
@@ -115,6 +116,7 @@ void	Server::setClientUsername(std::vector<std::string>& params, int fd)
 		return;
 	}
 
+	// Set username and prefix
 	getClient(fd)->setUsername(params[0]);
 	if (!getClient(fd)->getNickname().empty())
 		getClient(fd)->setPrefix(":" + getClient(fd)->getNickname() + "!" + getClient(fd)->getUsername() + "@localhost");

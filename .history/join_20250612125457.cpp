@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 20:35:20 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:38:53 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/04 19:23:45 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,21 @@ bool Server::canJoinChannel(Client& client, Channel& channel, const std::string&
 {
 	int fd = client.getSocket();
 
+	// Check invite-only
 	if (channel.getInviteOnly() && !channel.isInvited(fd))
 	{
 		errorMsg = ":server 473 " + client.getNickname() + " " + channel.getName() + " :Cannot join channel (+i)\r\n";
 		return false;
 	}
 
+	// Check key
 	if (channel.hasKey() && channel.getKey() != providedKey)
 	{
 		errorMsg = ":server 475 " + client.getNickname() + " " + channel.getName() + " :Cannot join channel (+k)\r\n";
 		return false;
 	}
 
+	// Check user limit
 	if (channel.hasUserLimit() && channel.getMembers().size() >= channel.getUserLimit())
 	{
 		errorMsg = ":server 471 " + client.getNickname() + " " + channel.getName() + " :Cannot join channel (+l)\r\n";
@@ -79,6 +82,7 @@ bool Server::canJoinChannel(Client& client, Channel& channel, const std::string&
 
 void	Server::joinCmd(std::vector<std::string>& params, int fd)
 {
+	// Check if client is authenticated
 	if (!getClient(fd)->getAuthentication())
 	{
 		std::string authMsg = ":server 451 * :You have not registered\r\n";
@@ -86,6 +90,7 @@ void	Server::joinCmd(std::vector<std::string>& params, int fd)
 		return;
 	}
 
+	// Check channel names and try JOIN
 	if (params.empty())
 	{
 		std::string errMsg = ":server 461 JOIN :Not enough parameters\r\n";

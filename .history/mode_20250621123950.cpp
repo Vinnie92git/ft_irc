@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 22:25:39 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:40:12 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:39:50 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void Server::modeCmd(std::vector<std::string>& params, int fd)
 
 	modeReply += " " + modeArgs + "\r\n";
 
+	// Broadcast to all clients in the channel
 	std::vector<int> members = channel->getMembers();
 		for (size_t i = 0; i < members.size(); ++i)
 		{

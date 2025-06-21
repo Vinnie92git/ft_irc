@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:42:59 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:42:43 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/21 12:41:49 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	Server::shutdownServer()
 
 void	Server::removeClient(int fd)
 {
+	// Remove client from the vector of connected clients and close its fd
 	for (size_t i = 0; i < connectedClients.size(); i++)
 	{
 		if (connectedClients[i].getSocket() == fd)
@@ -66,6 +67,7 @@ void	Server::removeClient(int fd)
 		}
 	}
 
+	// Remove client socket from the pool of monitored fds
 	for (size_t i = 0; i < pollFds.size(); i++)
 		if (pollFds[i].fd == fd)
 			pollFds.erase(pollFds.begin() + i);
@@ -77,12 +79,14 @@ ircMessage	Server::splitMessage(std::string& message)
 	std::istringstream			iss(message);
 	std::string					token;
 
+	// Handle optional prefix
 	if(!message.empty() && message[0] == ':')
 	{
 		iss >> token;
 		parsedMessage.prefix = token.substr(1);
 	}
 
+	// Get the command
 	if (iss >> token)
 		parsedMessage.command = token;
 
@@ -142,6 +146,7 @@ std::vector<std::string>	Server::splitBuffer(char* buffer)
 	std::istringstream			iss(buffer);
 	std::string					line;
 
+	// Stream buffer into vector of strings for parsing
 	while(std::getline(iss, line))
 	{
 		size_t pos = line.find_first_of("\r\n");
@@ -158,6 +163,7 @@ void	Server::receiveData(int fd)
 	char						buffer[512];
 	memset(buffer, 0, sizeof(buffer));
 
+	// Receive data from connected client
 	ssize_t	recvBytes = recv(fd, &buffer, sizeof(buffer) - 1, 0);
 	if (recvBytes > 0)
 	{
@@ -186,6 +192,7 @@ void	Server::acceptClient()
 	struct sockaddr_in	clientAddr;
 	socklen_t			addrLen = sizeof(clientAddr);
 
+	// Accept incomming client connection
 	int	newFd = accept(serverSocket, (struct sockaddr *)&clientAddr, &addrLen);
 	if (newFd < 0)
 	{
@@ -198,12 +205,14 @@ void	Server::acceptClient()
 		return ;
 	}
 
+	// Add client socket to the pool of monitored fds
 	struct pollfd	clientPoll;
 	clientPoll.fd = newFd;
 	clientPoll.events = POLLIN;
 	clientPoll.revents = 0;
 	pollFds.push_back(clientPoll);
 
+	// Add client to the vector of connected clients
 	newClient.setSocket(newFd);
 	newClient.setAddress(inet_ntoa(clientAddr.sin_addr));
 	connectedClients.push_back(newClient);
@@ -215,12 +224,14 @@ void	Server::acceptClient()
 
 void	Server::pollSockets()
 {
+	// Main loop, waiting for an event in a socket monitored by poll()
 	while (Server::signal == false)
 	{
 		int	activity = poll(&pollFds[0], pollFds.size(), -1);
 		if (activity < 0 && Server::signal == false)
 			throw std::runtime_error("\033[31;1mError: poll().\033[0m");
 
+		// Check if there is any data to read in the existing connections
 		for (size_t i = 0; i < pollFds.size(); i++)
 		{
 			if (pollFds[i].revents & POLLIN)
@@ -237,34 +248,41 @@ void	Server::pollSockets()
 
 void	Server::initSocket()
 {
+	// Store server socket address info
 	struct sockaddr_in	serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(serverPort);
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
 
+	// Create server socket
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket < 0)
 		throw std::runtime_error("\033[31;1mError: failed to create server socket.\033[0m");
 
+	// Enable the socket to be reusable and non-blocking
 	int	opt = 1;
 	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
 		throw std::runtime_error("\033[31;1mError: failed to reuse socket after server shutdown.\033[0m");
 	if (fcntl(serverSocket, F_SETFL, O_NONBLOCK) < 0)
 		throw std::runtime_error("\033[31;1mError: failed to create non-blocking socket.\033[0m");
 
+	// Bind the socket to IP address and Port
 	if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
 		throw std::runtime_error("\033[31;1mError: failed to bind server socket.\033[0m");
 
+	// Enable the socket to listen to incomming connections
 	if (listen(serverSocket, BACKLOG) < 0)
 		throw std::runtime_error("\033[31;1mError: server socket not listening.\033[0m");
 
+	// Add the socket to the pool of monitored fds
 	struct pollfd	serverPoll;
 	serverPoll.fd = serverSocket;
 	serverPoll.events = POLLIN;
 	serverPoll.revents = 0;
 	pollFds.push_back(serverPoll);
 
+	// Display server address info
 	inet_ntop(AF_INET, &serverAddr.sin_addr, serverIP, INET_ADDRSTRLEN);
 	std::cout << "\033[32;1m----------SERVER ONLINE----------\033[0m" << std::endl;
 	std::cout << "\033[32mServer socket\033[0m -> " << serverSocket << std::endl;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:47:04 by vini              #+#    #+#             */
-/*   Updated: 2025/06/21 12:40:22 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/04 19:33:12 by vini             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	Server::partChannel(std::string channelName, std::string reason, int fd)
 
 }
 
-void Server::partCmd(std::vector<std::string>& params, int fd)
+void Server::partCmd(std::vector<std::string>& params, int fd) // part <channel> <reason>
 {
 	if (!getClient(fd)->getAuthentication())
 	{
