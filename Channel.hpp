@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vini <vini@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
-/*   Updated: 2025/06/04 18:22:30 by vini             ###   ########.fr       */
+/*   Updated: 2025/06/30 01:50:41 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ class Channel
 
 		std::vector<int>	getMembers();
 		std::string			getName();
-		// std::vector<int>	getOpUsers();
 
 		bool		isMember(int memberFd);
 		bool		isOpMember(int memberFd);

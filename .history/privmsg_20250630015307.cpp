@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:47:09 by vini              #+#    #+#             */
-/*   Updated: 2025/06/30 01:53:19 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/30 01:53:07 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,12 @@ void	Server::privmsgCmd(std::vector<std::string>& params, int fd)
 		std::string trg = targets[i];
 		if (trg[0] == '#' || trg[0] == '&')
 		{
+			std::cout << "entrando en el canal" << std::endl;
 			privMsgChannel(target, message, fd);
 		}
 		else
 		{
+			std::cout << "entrando en el usuario" << std::endl;
 			privMsgUser(target, message, fd);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: roberto <roberto@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:30:55 by vini              #+#    #+#             */
-/*   Updated: 2025/04/29 14:30:51 by roberto          ###   ########.fr       */
+/*   Updated: 2025/06/30 01:50:41 by roberto          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,17 +40,48 @@ class Channel
 		void	addMember(int memberFd);
 		bool	removeMember(int memberFd);
 		void	addOpUser(int memberFd);
-		void	removeOpUser(int memberFd);
-		void	ismember(int memberFd);
+		bool	removeOpUser(int memberFd);
+		int		getFdFromNickname(std::string nickname);
 
 		std::vector<int>	getMembers();
 		std::string			getName();
-		std::vector<int>	getOpUsers();
+
+		bool		isMember(int memberFd);
+		bool		isOpMember(int memberFd);
+		void		setTopic(std::string topic);
+		std::string	getTopic();
+
+		void		setInviteOnly(bool value);
+		bool		getInviteOnly() const;
+
+		void		setTopicRestricted(bool value);
+		bool		getTopicRestricted() const;
+
+		void		setKey(const std::string& newKey);
+		void		removeKey();
+		std::string	getKey() const;
+		bool		hasKey() const;
+
+		void		setUserLimit(size_t limit);
+		void		removeUserLimit();
+		size_t		getUserLimit() const;
+		bool		hasUserLimit() const;
+
+		bool		isInvited(int fd) const;
+		void		inviteClient(int fd);
+		void		removeInvite(int fd);
+
 
 	private:
-		std::vector<int>	members;
 		std::string			name;
+		std::string			topic;
+		std::string			key;
+		std::vector<int>	members;
 		std::vector<int>	opUsers;
+		std::vector<int>	invitedClients;
+		bool				inviteOnly;
+		bool				topicRestricted;
+		size_t				userLimit;
 };
 
 #endif
